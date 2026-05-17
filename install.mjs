@@ -165,12 +165,18 @@ const SOURCE_FILES = [
   'index.mjs',
   'install.mjs',
   'package.json',
+  'package-lock.json',
+  'README.md',
   'skill-status',
   'skill-enable',
   'skill-disable',
   'skill-use',
   'hooks',
   'lib',
+  'scripts',
+  'benchmarks',
+  'tests',
+  'assets',
 ];
 
 // Files copied into MCPD_DIR (sibling of CG_DIR).
