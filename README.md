@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="./assets/context_governor_logo_transparent.png" alt="Context Governor logo" width="820">
+</p>
+
 <h1 align="center">Claude Context Governor</h1>
 
 <p align="center">
@@ -33,7 +37,7 @@
 
 ---
 
-## Nothing gets replaced
+## The control governor for Claude Code
 
 Your existing MCP servers stay where they are. Your skill library stays where it is. Your hooks stay where they are. The governor sits one layer above them and decides three things:
 
@@ -42,6 +46,10 @@ Your existing MCP servers stay where they are. Your skill library stays where it
 3. Which kinds of prompts deserve which model.
 
 Claude Code sees one MCP entry. The governor handles the fan-out, the lifecycle, and the routing. Sessions start fast because dormant capability stops costing tokens.
+
+<p align="center">
+  <img src="./assets/context_governor_readme_explainer_refined_v5.svg" alt="Context Governor animated explainer" width="980">
+</p>
 
 ## The cost you're paying right now
 
@@ -351,4 +359,3 @@ GitHub repo topics to set (Settings → About → Topics):
 Social preview image (Settings → Social preview):
   upload docs/assets/social-preview.png (1280×640) when available.
 -->
-

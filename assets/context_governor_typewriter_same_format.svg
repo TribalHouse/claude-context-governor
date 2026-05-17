@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 340" width="780" height="340">
+  <defs>
+    <linearGradient id="claude-orange" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#e87b55"/>
+      <stop offset="50%" style="stop-color:#d4623b"/>
+      <stop offset="100%" style="stop-color:#c4502a"/>
+    </linearGradient>
+    <linearGradient id="line-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#c4502a"/>
+      <stop offset="100%" style="stop-color:#e87b55"/>
+    </linearGradient>
+    <style>
+      @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+      .cursor { animation: blink 1s step-end infinite; }
+    </style>
+  </defs>
+  <rect width="780" height="340" rx="12" fill="#1a1a2e"/>
+  <text x="390" y="38" text-anchor="middle" font-family="'DejaVu Sans Mono', monospace" font-size="12.2" font-weight="700" fill="url(#claude-orange)" xml:space="preserve"> ████   ████  ██  ██ ██████ ██████ ██  ██ ██████ </text>
+  <text x="390" y="51" text-anchor="middle" font-family="'DejaVu Sans Mono', monospace" font-size="12.2" font-weight="700" fill="url(#claude-orange)" xml:space="preserve">██  ██ ██  ██ ███ ██   ██   ██     ██  ██   ██   </text>
+  <text x="390" y="64" text-anchor="middle" font-family="'DejaVu Sans Mono', monospace" font-size="12.2" font-weight="700" fill="url(#claude-orange)" xml:space="preserve">██     ██  ██ ██████   ██   ██      ████    ██   </text>
+  <text x="390" y="77" text-anchor="middle" font-family="'DejaVu Sans Mono', monospace" font-size="12.2" font-weight="700" fill="url(#claude-orange)" xml:space="preserve">██     ██  ██ ██████   ██   █████    ██     ██   </text>
+  <text x="390" y="90" text-anchor="middle" font-family="'DejaVu Sans Mono', monospace" font-size="12.2" font-weight="700" fill="url(#claude-orange)" xml:space="preserve">██     ██  ██ ██ ███   ██   ██      ████    ██   </text>
+  <text x="390" y="103" text-anchor="middle" font-family="'DejaVu Sans Mono', monospace" font-size="12.2" font-weight="700" fill="url(#claude-orange)" xml:space="preserve">██  ██ ██  ██ ██  ██   ██   ██     ██  ██   ██   </text>
+  <text x="390" y="116" text-anchor="middle" font-family="'DejaVu Sans Mono', monospace" font-size="12.2" font-weight="700" fill="url(#claude-orange)" xml:space="preserve"> ████   ████  ██  ██   ██   ██████ ██  ██   ██   </text>
+  <text x="390" y="144.0" text-anchor="middle" font-family="'DejaVu Sans Mono', monospace" font-size="11.2" font-weight="700" fill="url(#claude-orange)" xml:space="preserve"> ████   ████  ██  ██ ██████ █████  ██  ██  ████  █████  </text>
+  <text x="390" y="156.4" text-anchor="middle" font-family="'DejaVu Sans Mono', monospace" font-size="11.2" font-weight="700" fill="url(#claude-orange)" xml:space="preserve">██  ██ ██  ██ ██  ██ ██     ██  ██ ███ ██ ██  ██ ██  ██ </text>
+  <text x="390" y="168.8" text-anchor="middle" font-family="'DejaVu Sans Mono', monospace" font-size="11.2" font-weight="700" fill="url(#claude-orange)" xml:space="preserve">██     ██  ██ ██  ██ ██     ██  ██ ██████ ██  ██ ██  ██ </text>
+  <text x="390" y="181.2" text-anchor="middle" font-family="'DejaVu Sans Mono', monospace" font-size="11.2" font-weight="700" fill="url(#claude-orange)" xml:space="preserve">██ ███ ██  ██ ██  ██ █████  █████  ██████ ██  ██ █████  </text>
+  <text x="390" y="193.6" text-anchor="middle" font-family="'DejaVu Sans Mono', monospace" font-size="11.2" font-weight="700" fill="url(#claude-orange)" xml:space="preserve">██  ██ ██  ██ ██  ██ ██     ██ ██  ██ ███ ██  ██ ██ ██  </text>
+  <text x="390" y="206.0" text-anchor="middle" font-family="'DejaVu Sans Mono', monospace" font-size="11.2" font-weight="700" fill="url(#claude-orange)" xml:space="preserve">██  ██ ██  ██  ████  ██     ██  ██ ██  ██ ██  ██ ██  ██ </text>
+  <text x="390" y="218.4" text-anchor="middle" font-family="'DejaVu Sans Mono', monospace" font-size="11.2" font-weight="700" fill="url(#claude-orange)" xml:space="preserve"> █████  ████    ██   ██████ ██  ██ ██  ██  ████  ██  ██ </text>
+  <line x1="140" y1="248" x2="640" y2="248" stroke="url(#line-grad)" stroke-width="1.5" opacity="0.4"/>
+  <text x="390" y="278" text-anchor="middle" font-family="'DejaVu Sans Mono', monospace" font-size="14" fill="#e87b55" opacity="0.9" letter-spacing="2">GHOST TOKENS ARE EATING YOUR CONTEXT WINDOW<tspan class="cursor">▌</tspan></text>
+  <text x="390" y="308" text-anchor="middle" font-family="'DejaVu Sans Mono', monospace" font-size="13" fill="#7a7a9a" letter-spacing="1.5">Find them. Fix them. Track the quality decay.</text>
+</svg>

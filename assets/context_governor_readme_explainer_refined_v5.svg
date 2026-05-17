@@ -1,0 +1,162 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 390" width="980" height="390" role="img" aria-labelledby="title desc">
+  <title id="title">Context Governor README explainer</title>
+  <desc id="desc">Claude Code sends a single request into Context Governor. The control plane classifies the task, activates only the needed backend, skill, and model route, and leaves the rest dormant to save context.</desc>
+  <defs>
+    <linearGradient id="orange" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f19a72"/>
+      <stop offset="55%" stop-color="#e87b55"/>
+      <stop offset="100%" stop-color="#c4502a"/>
+    </linearGradient>
+    <linearGradient id="softOrange" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#e87b55" stop-opacity="0"/>
+      <stop offset="18%" stop-color="#e87b55" stop-opacity=".16"/>
+      <stop offset="50%" stop-color="#e87b55" stop-opacity=".96"/>
+      <stop offset="82%" stop-color="#e87b55" stop-opacity=".16"/>
+      <stop offset="100%" stop-color="#e87b55" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="governorGlow" cx="50%" cy="50%" r="60%">
+      <stop offset="0%" stop-color="#e87b55" stop-opacity="0.22"/>
+      <stop offset="100%" stop-color="#e87b55" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="glow" x="-100%" y="-100%" width="300%" height="300%">
+      <feGaussianBlur stdDeviation="3" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <style>
+      .bg { fill:#171827; }
+      .surface { fill:#1f2031; stroke:#30324a; stroke-width:1; }
+      .surface-muted { fill:#1a1b2a; stroke:#2a2c41; stroke-width:1; }
+      .mono, .title, .subtitle, .label, .body, .tiny { font-family:'Menlo','Cascadia Code','JetBrains Mono','Fira Code',monospace; }
+      .title { font-size:18px; font-weight:700; fill:#f3e9e3; letter-spacing:.2px; }
+      .subtitle { font-size:12px; fill:#8e90ab; }
+      .label { font-size:13px; font-weight:600; fill:#ebe3de; }
+      .body { font-size:12px; fill:#8e90ab; }
+      .tiny { font-size:11px; fill:#8e90ab; }
+      .accent { fill:#e87b55; }
+      .muted { fill:#6d708d; }
+      .route { stroke:#353753; stroke-width:2; fill:none; stroke-linecap:round; }
+      .route-hot { stroke:#e87b55; stroke-opacity:.82; stroke-width:2.6; fill:none; stroke-linecap:round; stroke-dasharray:10 10; animation:dash 1.15s linear infinite; filter:url(#glow); }
+      .route-dormant { stroke:#2b2d45; stroke-width:1.8; fill:none; stroke-linecap:round; opacity:.85; }
+      .packet { fill:#f19a72; filter:url(#glow); }
+      .dot { fill:#e87b55; filter:url(#glow); }
+      .sleep-dot { fill:#4d4f6a; }
+      .cursor { animation:blink 1s step-end infinite; }
+      .pulse { animation:pulse 5.8s ease-in-out infinite; transform-origin:center; }
+      .wake-a { animation:wakeA 6.2s ease-in-out infinite; }
+      .wake-b { animation:wakeB 6.2s ease-in-out infinite; }
+      .wake-c { animation:wakeC 6.2s ease-in-out infinite; }
+      .rot-1 { opacity:1; animation:rot1 6.2s ease-in-out infinite; }
+      .rot-2 { opacity:0; animation:rot2 6.2s ease-in-out infinite; }
+      .rot-3 { opacity:0; animation:rot3 6.2s ease-in-out infinite; }
+      .metric-before { opacity:1; animation:metricBefore 6.2s ease-in-out infinite; }
+      .metric-after { opacity:0; animation:metricAfter 6.2s ease-in-out infinite; }
+      .metric-delta { opacity:0; animation:metricDelta 6.2s ease-in-out infinite; }
+      .move-in { offset-path:path('M 258 186 C 312 186 342 186 390 186'); animation:moveIn 6.2s cubic-bezier(.65,0,.35,1) infinite; }
+      .move-a { offset-path:path('M 590 126 C 642 120 678 123 720 127'); animation:moveA 6.2s cubic-bezier(.65,0,.35,1) infinite; }
+      .move-b { offset-path:path('M 590 185 C 642 180 678 180 720 185'); animation:moveB 6.2s cubic-bezier(.65,0,.35,1) infinite; }
+      .move-c { offset-path:path('M 590 244 C 642 249 678 246 720 243'); animation:moveC 6.2s cubic-bezier(.65,0,.35,1) infinite; }
+      @keyframes dash { to { stroke-dashoffset:-20; } }
+      @keyframes blink { 50% { opacity:0; } }
+      @keyframes pulse { 0%,100% { transform:scale(.96); opacity:.9; } 22%,50% { transform:scale(1.03); opacity:1; } 70% { transform:scale(.985); opacity:.95; } }
+      @keyframes wakeA { 0%,24%,100% { opacity:.56; } 31%,78% { opacity:1; } }
+      @keyframes wakeB { 0%,33%,100% { opacity:.56; } 41%,82% { opacity:1; } }
+      @keyframes wakeC { 0%,43%,100% { opacity:.56; } 50%,86% { opacity:1; } }
+      @keyframes rot1 { 0%,24% { opacity:1; } 30%,100% { opacity:0; } }
+      @keyframes rot2 { 0%,32% { opacity:0; } 38%,58% { opacity:1; } 64%,100% { opacity:0; } }
+      @keyframes rot3 { 0%,66% { opacity:0; } 72%,92% { opacity:1; } 100% { opacity:0; } }
+      @keyframes metricBefore { 0%,42% { opacity:1; } 48%,100% { opacity:0; } }
+      @keyframes metricAfter { 0%,52% { opacity:0; } 58%,100% { opacity:1; } }
+      @keyframes metricDelta { 0%,66% { opacity:0; } 72%,100% { opacity:1; } }
+      @keyframes moveIn { 0%,8% { opacity:0; offset-distance:0%; } 12% { opacity:1; } 24% { opacity:1; offset-distance:100%; } 29%,100% { opacity:0; offset-distance:100%; } }
+      @keyframes moveA { 0%,26% { opacity:0; offset-distance:0%; } 31% { opacity:1; } 42% { opacity:1; offset-distance:100%; } 48%,100% { opacity:0; offset-distance:100%; } }
+      @keyframes moveB { 0%,35% { opacity:0; offset-distance:0%; } 40% { opacity:1; } 51% { opacity:1; offset-distance:100%; } 57%,100% { opacity:0; offset-distance:100%; } }
+      @keyframes moveC { 0%,44% { opacity:0; offset-distance:0%; } 49% { opacity:1; } 60% { opacity:1; offset-distance:100%; } 66%,100% { opacity:0; offset-distance:100%; } }
+    </style>
+  </defs>
+
+  <rect class="bg" width="980" height="390" rx="18"/>
+
+  <text x="490" y="38" text-anchor="middle" class="title">One MCP entry. Governed fan-out.<tspan class="accent cursor">▌</tspan></text>
+  <text x="490" y="60" text-anchor="middle" class="subtitle">Wake only the backends, skills, and routes doing work right now.</text>
+
+  <!-- Left card -->
+  <g transform="translate(54 110)">
+    <rect width="204" height="150" rx="16" class="surface"/>
+    <text x="22" y="30" class="label">Claude Code</text>
+    <rect x="22" y="46" width="150" height="74" rx="10" fill="#161723" stroke="#30324a"/>
+    <text x="34" y="68" class="tiny">$ claude</text>
+    <text x="34" y="88" class="tiny" fill="#e87b55">task request</text>
+    <text x="34" y="108" class="tiny">1 upstream MCP entry</text>
+    <text x="22" y="132" class="tiny">Claude sees one stable</text>
+    <text x="22" y="146" class="tiny">interface.</text>
+  </g>
+
+  <!-- Center card -->
+  <path class="route" d="M258 186 C 312 186 342 186 390 186"/>
+  <path class="route-hot" d="M258 186 C 312 186 342 186 390 186"/>
+  <circle r="5" class="packet move-in"/>
+
+  <g transform="translate(390 92)">
+    <circle cx="100" cy="94" r="86" fill="url(#governorGlow)" class="pulse"/>
+    <rect width="200" height="188" rx="20" class="surface"/>
+    <rect x="58" y="24" width="84" height="84" rx="26" fill="#1a1b2a" stroke="#373958"/>
+    <circle cx="100" cy="66" r="22" fill="url(#orange)"/>
+    <path d="M91 67 L98 74 L111 60" fill="none" stroke="#171827" stroke-width="3.8" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="100" y="130" text-anchor="middle" class="label" style="font-size:14px">Context Governor</text>
+    <text x="100" y="154" text-anchor="middle" class="tiny accent rot-1">classifying</text>
+    <text x="100" y="154" text-anchor="middle" class="tiny accent rot-2">routing</text>
+    <text x="100" y="154" text-anchor="middle" class="tiny accent rot-3">waking</text>
+  </g>
+
+  <!-- Right routes -->
+  <path class="route" d="M590 126 C 642 120 678 123 720 127"/>
+  <path class="route" d="M590 185 C 642 180 678 180 720 185"/>
+  <path class="route" d="M590 244 C 642 249 678 246 720 243"/>
+  <path class="route-dormant" d="M590 266 C 642 284 678 298 720 302"/>
+
+  <path class="route-hot" d="M590 126 C 642 120 678 123 720 127"/>
+  <path class="route-hot" d="M590 185 C 642 180 678 180 720 185"/>
+  <path class="route-hot" d="M590 244 C 642 249 678 246 720 243"/>
+
+  <circle r="4.8" class="packet move-a"/>
+  <circle r="4.8" class="packet move-b"/>
+  <circle r="4.8" class="packet move-c"/>
+
+  <!-- Right cards -->
+  <g transform="translate(720 102)" class="wake-a">
+    <rect width="214" height="50" rx="14" class="surface"/>
+    <text x="16" y="21" class="label">MCP Backends</text>
+    <text x="16" y="36" class="tiny">wake only the backend in use</text>
+    <circle cx="194" cy="18.5" r="5.5" class="dot"/>
+  </g>
+
+  <g transform="translate(720 160)" class="wake-b">
+    <rect width="214" height="50" rx="14" class="surface"/>
+    <text x="16" y="21" class="label">Skills</text>
+    <text x="16" y="36" class="tiny">load only the selected skill</text>
+    <circle cx="194" cy="18.5" r="5.5" class="dot"/>
+  </g>
+
+  <g transform="translate(720 218)" class="wake-c">
+    <rect width="214" height="50" rx="14" class="surface"/>
+    <text x="16" y="21" class="label">Model Route</text>
+    <text x="16" y="36" class="tiny">right model for the right task</text>
+    <circle cx="194" cy="18.5" r="5.5" class="dot"/>
+  </g>
+
+  <g transform="translate(720 276)">
+    <rect width="214" height="50" rx="14" class="surface-muted"/>
+    <text x="16" y="21" class="label muted">Dormant capabilities</text>
+    <text x="16" y="36" class="tiny">not loaded · no context paid</text>
+    <circle cx="194" cy="18.5" r="5.5" class="sleep-dot"/>
+  </g>
+
+  <!-- Bottom metric strip -->
+  <g transform="translate(146 328)">
+    <rect width="684" height="38" rx="12" fill="#141521" stroke="#2a2c41"/>
+    <text x="18" y="24" class="tiny">context footprint</text>
+    <text x="148" y="24" class="body metric-before">~30,500 tokens loaded</text>
+    <text x="148" y="24" class="body accent metric-after">~5,700 tokens active</text>
+    <text x="474" y="24" class="tiny metric-delta">–81% · pay only for active work</text>
+  </g>
+</svg>
