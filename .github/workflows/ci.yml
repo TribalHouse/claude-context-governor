@@ -24,7 +24,10 @@ jobs:
           node-version: ${{ matrix.node }}
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
+
+      - name: Verify
+        run: npm run verify
 
       - name: Installer dry-run
         run: CLAUDE_HOME=${{ runner.temp }}/cg-test node install.mjs --dry-run --no-settings

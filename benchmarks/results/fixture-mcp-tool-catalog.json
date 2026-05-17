@@ -1,0 +1,26 @@
+{
+  "benchmark": "fixture-mcp-tool-catalog",
+  "generatedBy": "npm run bench",
+  "caveat": "Heuristic token estimate over fixture MCP settings and governor registry. This is not a live Claude usage run.",
+  "measurement": {
+    "baseline": {
+      "mcpServers": 3,
+      "tools": 10,
+      "estimatedTokens": 106,
+      "mcpEstimatedTokens": 106,
+      "skills": 0,
+      "skillsEstimatedTokens": 0
+    },
+    "governor": {
+      "mcpEntries": 1,
+      "registeredBackends": 3,
+      "enabledBackends": 3,
+      "tools": 13,
+      "estimatedTokens": 132,
+      "mcpEstimatedTokens": 132,
+      "activeSkills": 0,
+      "skillsEstimatedTokens": 0
+    }
+  },
+  "savedTokensPerSession": -26
+}

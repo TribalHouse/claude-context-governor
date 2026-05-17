@@ -32,17 +32,24 @@ import net from 'net';
 import { execFileSync } from 'child_process';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { formatAuditReport, readAuditEvents, writeAuditEvent } from './lib/audit.mjs';
 import { expandHeaders, redact } from './lib/core.mjs';
 import { collectMeasurement, formatMeasurement, parseMeasureArgs } from './lib/measure.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const REGISTRY_PATH = path.join(__dirname, 'registry.json');
-const LOG_PATH = path.join(__dirname, 'governor.log');
-const MCPD_PIDS_DIR = path.join(path.dirname(__dirname), 'mcpd', 'pids');
+const REGISTRY_PATH = process.env.CONTEXT_GOVERNOR_REGISTRY_PATH || path.join(__dirname, 'registry.json');
+const LOG_PATH = process.env.CONTEXT_GOVERNOR_LOG_PATH || path.join(__dirname, 'governor.log');
+const AUDIT_PATH = process.env.CONTEXT_GOVERNOR_AUDIT_PATH || path.join(__dirname, 'audit.jsonl');
+const MCPD_PIDS_DIR = process.env.CONTEXT_GOVERNOR_MCPD_PIDS_DIR || path.join(path.dirname(__dirname), 'mcpd', 'pids');
 
 if (process.argv[2] === 'measure') {
   const options = parseMeasureArgs(process.argv.slice(3));
   process.stdout.write(formatMeasurement(collectMeasurement(options)));
+  process.exit(0);
+}
+
+if (process.argv[2] === 'audit') {
+  process.stdout.write(formatAuditReport(readAuditEvents(AUDIT_PATH)));
   process.exit(0);
 }
 
@@ -76,6 +83,10 @@ function log(msg) {
     rotateLogIfNeeded();
     fs.appendFileSync(LOG_PATH, line + '\n');
   } catch {}
+}
+
+function audit(action, details = {}) {
+  writeAuditEvent(AUDIT_PATH, { action, ...details });
 }
 
 // ─── Registry ───────────────────────────────────────────────────────────────
@@ -113,9 +124,13 @@ async function connect(name) {
   }
 
   const cfg = registry[name];
-  if (!cfg || cfg.disabled) throw new Error(`Backend '${name}' is disabled or unknown`);
+  if (!cfg || cfg.disabled) {
+    audit('backend_blocked', { backend: name, reason: cfg?.disabled ? 'disabled' : 'unknown' });
+    throw new Error(`Backend '${name}' is disabled or unknown`);
+  }
 
   log(`Connecting: ${name} (${cfg.transport})`);
+  audit('backend_connect_start', { backend: name, transport: cfg.transport });
 
   let transport;
   if (cfg.transport === 'streamable-http') {
@@ -149,6 +164,7 @@ async function connect(name) {
   const pid = transport.pid ?? null;
   active.set(name, { client, transport, tools, lastUsedAt: Date.now(), pid });
   log(`Connected: ${name} — ${tools.length} tools${pid ? ` (pid ${pid})` : ''}`);
+  audit('backend_connected', { backend: name, transport: cfg.transport, tools: tools.length, pid });
   return client;
 }
 
@@ -158,6 +174,7 @@ async function disconnect(name) {
   try { await entry.transport.close(); } catch {}
   active.delete(name);
   log(`Disconnected: ${name}`);
+  audit('backend_disconnected', { backend: name });
 }
 
 // ─── Idle cleanup (runs every 60 s) ────────────────────────────────────────
@@ -211,16 +228,21 @@ function extractTextContent(result) {
 async function callBackendTool(backendName, toolName, args = {}) {
   const cfg = registry[backendName];
   if (!cfg) throw new Error(`Unknown backend: ${backendName}`);
-  if (cfg.disabled) throw new Error(`Backend '${backendName}' is disabled`);
+  if (cfg.disabled) {
+    audit('backend_blocked', { backend: backendName, tool: toolName, reason: 'disabled' });
+    throw new Error(`Backend '${backendName}' is disabled`);
+  }
 
   await connect(backendName);
   active.get(backendName).lastUsedAt = Date.now();
+  audit('tool_call_start', { backend: backendName, tool: toolName });
 
   const client = active.get(backendName).client;
   const timeoutSec = cfg.call_timeout_seconds ?? 30;
   let timeoutHandle;
   const timeoutPromise = new Promise((_, reject) => {
     timeoutHandle = setTimeout(() => {
+      audit('tool_call_timeout', { backend: backendName, tool: toolName, timeout_seconds: timeoutSec });
       reject(new Error(`timeout after ${timeoutSec}s`));
       disconnect(backendName).catch(() => {});
     }, timeoutSec * 1000);
@@ -232,9 +254,11 @@ async function callBackendTool(backendName, toolName, args = {}) {
       timeoutPromise,
     ]);
     clearTimeout(timeoutHandle);
+    audit('tool_call_success', { backend: backendName, tool: toolName });
     return result;
   } catch (e) {
     clearTimeout(timeoutHandle);
+    audit('tool_call_error', { backend: backendName, tool: toolName, reason: e.message });
     if (e.message?.match(/not connected|ECONNREFUSED|ECONNRESET|closed|timeout/i)) {
       await disconnect(backendName).catch(() => {});
     }
@@ -749,9 +773,11 @@ async function handleBrowserTask({ task, url, action = 'snapshot', params = {} }
 async function handleProjectTool({ target, tool, args = {} }) {
   const cfg = registry[target];
   if (!cfg) {
+    audit('backend_blocked', { backend: target, reason: 'unknown' });
     return mcpError(`Unknown target "${target}". Available: supabase, webflow, github, figma`);
   }
   if (cfg.disabled) {
+    audit('backend_blocked', { backend: target, reason: 'disabled' });
     return mcpError(`Backend '${target}' is disabled in registry.json`);
   }
 
@@ -788,6 +814,7 @@ async function handleProjectTool({ target, tool, args = {} }) {
 }
 
 function handleListTools({ show_backend_tools = false, filter } = {}) {
+  audit('tool_list', { show_backend_tools, filter });
   const lines = ['', 'Context Governor — Available Tools', '═'.repeat(60), ''];
 
   lines.push('High-level intent tools (use these):');
@@ -870,9 +897,11 @@ const server = new Server(
   { capabilities: { tools: {} } }
 );
 
-server.setRequestHandler(ListToolsRequestSchema, async () => ({
-  tools: buildToolList(),
-}));
+server.setRequestHandler(ListToolsRequestSchema, async () => {
+  const tools = buildToolList();
+  audit('mcp_list_tools', { tools: tools.length });
+  return { tools };
+});
 
 server.setRequestHandler(CallToolRequestSchema, async (request) => {
   const { name: toolName, arguments: args = {} } = request.params;
@@ -891,8 +920,14 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
   const { backend, tool } = parsed;
   const cfg = registry[backend];
 
-  if (!cfg) return mcpError(`Unknown backend: ${backend}`);
-  if (cfg.disabled) return mcpError(`Backend '${backend}' is disabled in registry.json`);
+  if (!cfg) {
+    audit('backend_blocked', { backend, tool, reason: 'unknown' });
+    return mcpError(`Unknown backend: ${backend}`);
+  }
+  if (cfg.disabled) {
+    audit('backend_blocked', { backend, tool, reason: 'disabled' });
+    return mcpError(`Backend '${backend}' is disabled in registry.json`);
+  }
 
   try {
     return await callBackendTool(backend, tool, args);

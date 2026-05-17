@@ -18,6 +18,8 @@
     "cleanup-idle": "node index.mjs --cleanup-idle",
     "install:dry": "node install.mjs --dry-run",
     "test": "node --test",
+    "bench": "node scripts/run_benchmark.mjs",
+    "verify": "npm test && npm run bench && node index.mjs measure --baseline benchmarks/fixtures/baseline-settings.json --registry benchmarks/fixtures/governor-registry.json --mcp && CLAUDE_HOME=${TMPDIR:-/tmp}/context-governor-verify node install.mjs --dry-run --no-settings",
     "test:smoke": "node index.mjs --status && echo '{\"user_prompt\":\"design the auth schema\"}' | node hooks/route-prompt.mjs"
   },
   "keywords": [
@@ -95,6 +97,8 @@
     "lib/",
     "hooks/",
     "mcpd/",
+    "scripts/",
+    "benchmarks/",
     "registry.example.json",
     "skills-registry.example.json",
     "README.md",

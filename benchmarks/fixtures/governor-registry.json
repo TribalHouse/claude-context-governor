@@ -1,0 +1,28 @@
+{
+  "_settings": {
+    "exposePassthroughTools": false
+  },
+  "serena": {
+    "transport": "stdio",
+    "command": "uvx",
+    "args": ["serena-mcp"],
+    "tools_cache": [
+      "find_symbol",
+      "find_referencing_symbols",
+      "get_symbols_overview",
+      "get_diagnostics_for_file"
+    ]
+  },
+  "context7": {
+    "transport": "stdio",
+    "command": "npx",
+    "args": ["-y", "@upstash/context7-mcp"],
+    "tools_cache": ["resolve-library-id", "query-docs"]
+  },
+  "playwright": {
+    "transport": "stdio",
+    "command": "npx",
+    "args": ["-y", "@playwright/mcp"],
+    "tools_cache": ["browser_navigate", "browser_snapshot", "browser_click", "browser_fill"]
+  }
+}

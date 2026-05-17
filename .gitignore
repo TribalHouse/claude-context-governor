@@ -1,6 +1,5 @@
 # Dependencies
 node_modules/
-package-lock.json
 
 # Local config (users edit registry.json from registry.example.json)
 registry.json

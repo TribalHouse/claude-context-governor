@@ -34,8 +34,10 @@
   <a href="#the-gov-tools">gov.* tools</a> ·
   <a href="#manage-skills">Skills</a> ·
   <a href="#comparison">Comparison</a> ·
+  <a href="#audit-trail">Audit</a> ·
   <a href="#route-prompts-to-the-right-model">Routing</a> ·
   <a href="#architecture">Architecture</a> ·
+  <a href="#benchmarks">Benchmarks</a> ·
   <a href="#ship-tests-before-more-features">Tests</a> ·
   <a href="#faq">FAQ</a> ·
   <a href="./CONTRIBUTING.md">Contributing</a>
@@ -107,6 +109,21 @@ Estimated saved: 24,860 tokens / session
 
 The goal is to make the promise concrete: show the before/after inventory, expose the assumptions behind token estimates, and let users compare their actual Claude Code setup instead of relying on generic examples.
 
+## Benchmarks
+
+Measurement output is not enough on its own, so the repo keeps benchmark fixtures and generated result artifacts under `benchmarks/`.
+
+```bash
+npm run bench
+```
+
+Current artifact:
+
+- [`benchmarks/results/fixture-mcp-tool-catalog.md`](./benchmarks/results/fixture-mcp-tool-catalog.md)
+- [`benchmarks/results/fixture-mcp-tool-catalog.json`](./benchmarks/results/fixture-mcp-tool-catalog.json)
+
+The fixture benchmark is intentionally conservative: it reports projected baseline tokens, projected governor tokens, and the caveat that this is not a live Claude usage run. If the fixture shows negative savings, the result stays negative. The point is to make the benchmark honest and reproducible, not to force a flattering number.
+
 ## Highlights
 
 - **[One MCP entry, N backends](#configure-backends).** Multiplex whichever MCP servers you already use (Serena, Context7, Playwright, Supabase, GitHub, Figma, etc.) behind one connection. Nothing extra to install.
@@ -149,6 +166,24 @@ Context Governor focuses on preventing unnecessary context from entering the ses
 That makes it different from tools that primarily help recover, summarize, or reuse context after a session has already grown. Those approaches can be valuable. They solve a different problem. Context Governor sits earlier in the path and asks whether a backend, skill, hook, or route should enter Claude Code context at all.
 
 It is also not trying to be a better MCP server than the servers you already use. It is a control plane above them: one Claude Code entry, governed fan-out underneath, and reversible configuration if you decide to go back.
+
+## Audit trail
+
+Runtime decisions are written as local JSONL audit events. The audit trail records the things that matter for trust:
+
+- backend connect/disconnect
+- blocked disabled or unknown backends
+- tool call start/success/error/timeout
+- MCP tool-list requests
+- user-facing `gov.list_tools` calls
+
+Inspect it with:
+
+```bash
+context-governor audit
+```
+
+The audit path defaults to `audit.jsonl` next to the governor runtime and can be overridden with `CONTEXT_GOVERNOR_AUDIT_PATH` for tests or sandboxed installs.
 
 ## Install
 
@@ -313,10 +348,11 @@ Same protocol on both sides. The MCP SDK supports server and client roles in the
 
 The project should prove the control plane before expanding the surface area. Until this suite is in place, Context Governor should be treated as a clever MVP, not robust infrastructure.
 
-Current test command:
+Current verification commands:
 
 ```bash
 npm test
+npm run verify
 ```
 
 Current coverage:
@@ -329,14 +365,12 @@ Current coverage:
 - Env-var expansion tests
 - Secret redaction tests
 - Tool-list filtering tests
-
-Next coverage targets:
-
 - Disabled backend tests
 - On-demand lifecycle tests with a fake stdio MCP server
 - Timeout/disconnect tests
+- Audit CLI tests
 
-The fake MCP harness is priority one because MCP routing is the core product. It should simulate stdio startup, tool listing, tool calls, slow responses, disconnects, malformed responses, and disabled backends without requiring real third-party services.
+The fake MCP harness simulates stdio startup, tool listing, normal tool calls, slow responses, disconnects, and disabled backends without requiring real third-party services.
 
 ## FAQ
 
@@ -357,8 +391,8 @@ Each `mcpServers` entry opens a connection at session start and registers its to
 
 ## Roadmap
 
-- [ ] Fake MCP test harness for stdio lifecycle, tool listing, calls, timeouts, and disconnects
-- [ ] `context-governor measure` with MCP, skill, baseline, and estimated-token reports
+- [ ] Malformed-response tests in the fake MCP harness
+- [ ] Live benchmark mode against real Claude Code sessions
 - [ ] Linux `mcpd` (systemd units to replace launchd plists)
 - [ ] Health checks and auto-restart for always-on services
 - [ ] Per-backend rate limits in the registry
