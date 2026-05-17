@@ -14,6 +14,7 @@
   <a href="https://github.com/TribalHouse/claude-context-governor/stargazers"><img src="https://img.shields.io/github/stars/TribalHouse/claude-context-governor?style=for-the-badge&logo=github&color=yellow" alt="GitHub stars"></a>
   <a href="./LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge" alt="MIT License"></a>
   <a href="https://nodejs.org"><img src="https://img.shields.io/badge/Node-%E2%89%A518-339933.svg?style=for-the-badge&logo=node.js&logoColor=white" alt="Node ≥18"></a>
+[![SafeSkill 95/100](https://img.shields.io/badge/SafeSkill-95%2F100_Verified%20Safe-brightgreen)](https://safeskill.dev/scan/tribalhouse-claude-context-governor)
 </p>
 
 <p align="center">
