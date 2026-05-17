@@ -14,6 +14,10 @@
 </p>
 
 <p align="center">
+  <img src="./assets/context_governor_typewriter_same_format.svg" alt="Context Governor typewriter intro" width="780">
+</p>
+
+<p align="center">
   <a href="https://github.com/TribalHouse/claude-context-governor/actions/workflows/ci.yml?branch=main"><img src="https://img.shields.io/github/actions/workflow/status/TribalHouse/claude-context-governor/ci.yml?branch=main&style=for-the-badge&label=CI" alt="CI status"></a>
   <a href="https://github.com/TribalHouse/claude-context-governor/stargazers"><img src="https://img.shields.io/github/stars/TribalHouse/claude-context-governor?style=for-the-badge&logo=github&color=yellow" alt="GitHub stars"></a>
   <a href="./LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge" alt="MIT License"></a>
