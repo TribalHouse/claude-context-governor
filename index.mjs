@@ -27,36 +27,34 @@
  *   --cleanup-idle   SIGTERM all running on-demand stdio processes and exit
  */
 
-import { Server } from '@modelcontextprotocol/sdk/server/index.js';
-import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
-import { Client } from '@modelcontextprotocol/sdk/client/index.js';
-import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js';
-import { SSEClientTransport } from '@modelcontextprotocol/sdk/client/sse.js';
-import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js';
-import { CallToolRequestSchema, ListToolsRequestSchema } from '@modelcontextprotocol/sdk/types.js';
 import fs from 'fs';
 import net from 'net';
 import { execFileSync } from 'child_process';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { expandHeaders, redact } from './lib/core.mjs';
+import { collectMeasurement, formatMeasurement, parseMeasureArgs } from './lib/measure.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const REGISTRY_PATH = path.join(__dirname, 'registry.json');
 const LOG_PATH = path.join(__dirname, 'governor.log');
 const MCPD_PIDS_DIR = path.join(path.dirname(__dirname), 'mcpd', 'pids');
 
-// ─── Logging ────────────────────────────────────────────────────────────────
-
-const SECRET_PATTERNS = [
-  /Bearer\s+[A-Za-z0-9\-._~+/]+=*/gi,
-  /(token|key|secret|password|authorization)=[^\s&"'`]+/gi,
-  /eyJ[A-Za-z0-9\-_]+\.[A-Za-z0-9\-_]+\.[A-Za-z0-9\-_]*/g,
-];
-
-function redact(msg) {
-  for (const re of SECRET_PATTERNS) msg = msg.replace(re, '[REDACTED]');
-  return msg;
+if (process.argv[2] === 'measure') {
+  const options = parseMeasureArgs(process.argv.slice(3));
+  process.stdout.write(formatMeasurement(collectMeasurement(options)));
+  process.exit(0);
 }
+
+const { Server } = await import('@modelcontextprotocol/sdk/server/index.js');
+const { StdioServerTransport } = await import('@modelcontextprotocol/sdk/server/stdio.js');
+const { Client } = await import('@modelcontextprotocol/sdk/client/index.js');
+const { StreamableHTTPClientTransport } = await import('@modelcontextprotocol/sdk/client/streamableHttp.js');
+const { SSEClientTransport } = await import('@modelcontextprotocol/sdk/client/sse.js');
+const { StdioClientTransport } = await import('@modelcontextprotocol/sdk/client/stdio.js');
+const { CallToolRequestSchema, ListToolsRequestSchema } = await import('@modelcontextprotocol/sdk/types.js');
+
+// ─── Logging ────────────────────────────────────────────────────────────────
 
 const LOG_MAX_BYTES = 2 * 1024 * 1024; // 2 MB
 
@@ -108,23 +106,6 @@ const active = new Map();
 // Expand ${ENV_VAR} placeholders in header values. Used so registry.json can
 // reference env vars (e.g. "Authorization": "Bearer ${LAZYWEB_TOKEN}") without
 // storing the secret in the file.
-function expandHeaders(headers, backendName) {
-  const out = {};
-  const re = /\$\{([A-Z_][A-Z0-9_]*)\}/g;
-  for (const [k, v] of Object.entries(headers)) {
-    if (typeof v !== 'string') { out[k] = v; continue; }
-    out[k] = v.replace(re, (_, varName) => {
-      const value = process.env[varName];
-      if (value === undefined) {
-        log(`Warning: backend '${backendName}' header '${k}' references missing env var ${varName}`);
-        return '';
-      }
-      return value;
-    });
-  }
-  return out;
-}
-
 async function connect(name) {
   if (active.has(name)) {
     active.get(name).lastUsedAt = Date.now();
@@ -138,10 +119,10 @@ async function connect(name) {
 
   let transport;
   if (cfg.transport === 'streamable-http') {
-    const opts = cfg.headers ? { requestInit: { headers: expandHeaders(cfg.headers, name) } } : undefined;
+    const opts = cfg.headers ? { requestInit: { headers: expandHeaders(cfg.headers, name, process.env, log) } } : undefined;
     transport = new StreamableHTTPClientTransport(new URL(cfg.endpoint), opts);
   } else if (cfg.transport === 'sse') {
-    const opts = cfg.headers ? { requestInit: { headers: expandHeaders(cfg.headers, name) } } : undefined;
+    const opts = cfg.headers ? { requestInit: { headers: expandHeaders(cfg.headers, name, process.env, log) } } : undefined;
     transport = new SSEClientTransport(new URL(cfg.endpoint), opts);
   } else if (cfg.transport === 'stdio') {
     const env = { ...process.env };

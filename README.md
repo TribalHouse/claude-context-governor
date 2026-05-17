@@ -80,9 +80,9 @@ Session start            ~30,500 tok   Session start              ~5,700 tok
 
 ## Measurement tooling
 
-Illustrative numbers are useful for explaining the shape of the problem, but the project needs first-class measurement commands before it can ask teams to trust savings claims in their own environments.
+Illustrative numbers are useful for explaining the shape of the problem, but the project also ships a measurement command so teams can inspect their own environment.
 
-Planned CLI:
+CLI:
 
 ```bash
 context-governor measure
@@ -319,18 +319,22 @@ Current test command:
 npm test
 ```
 
-Minimum serious suite:
+Current coverage:
 
+- Measurement baseline/governor output tests
+- Prompt-router classification tests
+- Skill enable/disable/status tests
+- Installer dry-run test
 - Registry parser tests
 - Env-var expansion tests
 - Secret redaction tests
 - Tool-list filtering tests
+
+Next coverage targets:
+
 - Disabled backend tests
 - On-demand lifecycle tests with a fake stdio MCP server
 - Timeout/disconnect tests
-- Skill enable/disable/status tests
-- Prompt-router classification tests
-- Installer dry-run test
 
 The fake MCP harness is priority one because MCP routing is the core product. It should simulate stdio startup, tool listing, tool calls, slow responses, disconnects, malformed responses, and disabled backends without requiring real third-party services.
 
