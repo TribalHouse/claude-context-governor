@@ -1,0 +1,158 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 700" width="900" height="700" role="img" aria-labelledby="title desc">
+  <title id="title">Context Governor enterprise architecture</title>
+  <desc id="desc">An animated enterprise architecture breakdown showing Claude Code connected through Context Governor to existing MCP backends and APIs.</desc>
+  <defs>
+    <style>
+      .bg { fill:#0f1420; }
+      .frame { fill:none; stroke:#20293c; stroke-width:1.5; }
+      .panel { fill:#131b2a; stroke:#f0f3f8; stroke-width:1.5; }
+      .panel-muted { fill:#111928; stroke:#cfd5e1; stroke-width:1.35; }
+      .dashed { fill:none; stroke:#dfe5ef; stroke-width:1.25; stroke-dasharray:8 6; }
+      .rule { stroke:#2a354b; stroke-width:1; }
+      .conn { stroke:#e6ebf3; stroke-width:1.6; fill:none; stroke-linecap:square; }
+      .conn-dim { stroke:#5d6780; stroke-opacity:.42; stroke-width:1.1; fill:none; }
+      .mono { font-family:'Menlo','Cascadia Code','JetBrains Mono','Fira Code',monospace; }
+      .title { font: 700 15px 'Menlo','Cascadia Code','JetBrains Mono','Fira Code',monospace; fill:#f4f6fb; }
+      .body { font: 600 12.5px 'Menlo','Cascadia Code','JetBrains Mono','Fira Code',monospace; fill:#f0f3f8; }
+      .body-muted { font: 600 12px 'Menlo','Cascadia Code','JetBrains Mono','Fira Code',monospace; fill:#d1d7e2; }
+      .small { font: 600 11px 'Menlo','Cascadia Code','JetBrains Mono','Fira Code',monospace; fill:#aeb7c7; }
+      .accent { fill:#f08d61; }
+      .accent-line { stroke:#f08d61; }
+      .accent-glow { filter:url(#glow); }
+      .row-hi { fill:#f08d61; opacity:0; }
+      .row-hi-a { animation:rowA 4.8s ease-in-out infinite; }
+      .row-hi-b { animation:rowB 4.8s ease-in-out infinite; }
+      .row-hi-c { animation:rowC 4.8s ease-in-out infinite; }
+      .card-a { animation:cardA 4.8s ease-in-out infinite; }
+      .card-b { animation:cardB 4.8s ease-in-out infinite; }
+      .card-c { animation:cardC 4.8s ease-in-out infinite; }
+      .packet-top { offset-path:path('M 450 98 L 450 140 L 450 152'); animation:packetTop 4.8s linear infinite; }
+      .packet-a { offset-path:path('M 216 376 L 216 412'); animation:packetA 4.8s linear infinite; }
+      .packet-b { offset-path:path('M 399 376 L 399 412'); animation:packetB 4.8s linear infinite; }
+      .packet-c { offset-path:path('M 642 376 L 642 412'); animation:packetC 4.8s linear infinite; }
+      .draw-1 { stroke-dasharray:260; stroke-dashoffset:260; animation:draw 1s ease-out forwards; }
+      .draw-2 { stroke-dasharray:720; stroke-dashoffset:720; animation:draw 1.4s ease-out .15s forwards; }
+      .draw-3 { stroke-dasharray:1100; stroke-dashoffset:1100; animation:draw 1.8s ease-out .3s forwards; }
+      @keyframes draw { to { stroke-dashoffset:0; } }
+      @keyframes rowA { 0%,100% { opacity:0; } 16%,28% { opacity:.14; } }
+      @keyframes rowB { 0%,100% { opacity:0; } 34%,46% { opacity:.14; } }
+      @keyframes rowC { 0%,100% { opacity:0; } 52%,64% { opacity:.14; } }
+      @keyframes cardA { 0%,100% { stroke:#cfd5e1; } 26%,36% { stroke:#f08d61; } }
+      @keyframes cardB { 0%,100% { stroke:#cfd5e1; } 44%,54% { stroke:#f08d61; } }
+      @keyframes cardC { 0%,100% { stroke:#cfd5e1; } 62%,72% { stroke:#f08d61; } }
+      @keyframes packetTop {
+        0%,8% { opacity:0; offset-distance:0%; }
+        10% { opacity:1; }
+        24% { opacity:1; offset-distance:100%; }
+        25%,100% { opacity:0; offset-distance:100%; }
+      }
+      @keyframes packetA {
+        0%,24% { opacity:0; offset-distance:0%; }
+        28% { opacity:1; }
+        40% { opacity:1; offset-distance:100%; }
+        41%,100% { opacity:0; offset-distance:100%; }
+      }
+      @keyframes packetB {
+        0%,40% { opacity:0; offset-distance:0%; }
+        44% { opacity:1; }
+        56% { opacity:1; offset-distance:100%; }
+        57%,100% { opacity:0; offset-distance:100%; }
+      }
+      @keyframes packetC {
+        0%,56% { opacity:0; offset-distance:0%; }
+        60% { opacity:1; }
+        72% { opacity:1; offset-distance:100%; }
+        73%,100% { opacity:0; offset-distance:100%; }
+      }
+    </style>
+    <filter id="glow" x="-100%" y="-100%" width="300%" height="300%">
+      <feGaussianBlur stdDeviation="4" result="b"/>
+      <feMerge>
+        <feMergeNode in="b"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <rect width="900" height="700" class="bg"/>
+  <rect x="16" y="14" width="868" height="670" class="frame"/>
+
+  <!-- Top source box -->
+  <g>
+    <rect x="305.5" y="38" width="289" height="58" class="panel"/>
+    <text x="450" y="63" text-anchor="middle" class="title">Claude Code</text>
+    <text x="450" y="82" text-anchor="middle" class="body-muted">one mcpServers entry</text>
+  </g>
+
+  <!-- Connector into governor -->
+  <path d="M 450 96 L 450 124" class="conn draw-1"/>
+  <text x="472" y="122" class="body">stdio MCP</text>
+  <path d="M 450 125 L 450 140" class="conn draw-1"/>
+  <path d="M 445 140 L 450 149 L 455 140" class="conn draw-1"/>
+  <circle r="3.5" class="accent accent-glow packet-top"/>
+
+  <!-- Governor block -->
+  <g>
+    <rect x="167" y="154" width="566" height="219" class="panel"/>
+    <path d="M 167 154 L 733 154 L 733 373 L 167 373 Z" class="dashed draw-2"/>
+    <text x="450" y="178" text-anchor="middle" class="title">Context Governor</text>
+
+    <!-- Row guides / highlights -->
+    <rect x="189" y="196" width="524" height="52" rx="4" class="row-hi row-hi-a"/>
+    <rect x="189" y="256" width="524" height="48" rx="4" class="row-hi row-hi-b"/>
+    <rect x="189" y="316" width="524" height="48" rx="4" class="row-hi row-hi-c"/>
+
+    <line x1="189" y1="250" x2="713" y2="250" class="rule"/>
+    <line x1="189" y1="310" x2="713" y2="310" class="rule"/>
+
+    <text x="198" y="218" class="body">gov.* intent tools</text>
+    <text x="385" y="218" class="body">search_code   search_docs   browser_task</text>
+    <text x="385" y="238" class="body">project_tool  list_tools    tool_status</text>
+
+    <text x="198" y="276" class="body">Control plane</text>
+    <text x="385" y="276" class="body">dynamic tool list · env var expansion</text>
+    <text x="385" y="296" class="body">per-backend timeouts</text>
+
+    <text x="198" y="334" class="body">Runtime hygiene</text>
+    <text x="385" y="334" class="body">secret redaction · 2 MB log rotation</text>
+    <text x="385" y="354" class="body">60-second idle cleanup</text>
+  </g>
+
+  <!-- Down connectors -->
+  <path d="M 216 373 L 216 398" class="conn draw-1"/>
+  <path d="M 211 398 L 216 407 L 221 398" class="conn draw-1"/>
+  <path d="M 399 373 L 399 398" class="conn draw-1"/>
+  <path d="M 394 398 L 399 407 L 404 398" class="conn draw-1"/>
+  <path d="M 642 373 L 642 398" class="conn draw-1"/>
+  <path d="M 637 398 L 642 407 L 647 398" class="conn draw-1"/>
+  <circle r="3.5" class="accent accent-glow packet-a"/>
+  <circle r="3.5" class="accent accent-glow packet-b"/>
+  <circle r="3.5" class="accent accent-glow packet-c"/>
+
+  <!-- Existing servers block -->
+  <g>
+    <rect x="166" y="431" width="568" height="218" class="panel"/>
+    <path d="M 166 431 L 734 431 L 734 649 L 166 649 Z" class="dashed draw-3"/>
+    <text x="197" y="455" class="title">Whatever MCP servers you already use</text>
+    <text x="197" y="476" class="body">(none of these ship with the governor — bring your own)</text>
+
+    <rect x="201" y="510" width="155" height="118" class="panel-muted card-a"/>
+    <rect x="382" y="510" width="160" height="118" class="panel-muted card-b"/>
+    <rect x="566" y="510" width="150" height="118" class="panel-muted card-c"/>
+
+    <text x="211" y="535" class="title">any always_on</text>
+    <text x="211" y="556" class="title">backend</text>
+    <text x="211" y="595" class="body">http or sse</text>
+    <text x="211" y="616" class="body">launch-managed</text>
+
+    <text x="394" y="535" class="title">any on-demand</text>
+    <text x="394" y="556" class="title">backend</text>
+    <text x="394" y="595" class="body">stdio</text>
+    <text x="394" y="616" class="body">spawned on call</text>
+
+    <text x="577" y="535" class="title">…and your own</text>
+    <text x="577" y="556" class="title">MCP / API</text>
+    <text x="577" y="595" class="body">http · sse</text>
+    <text x="577" y="616" class="body">· stdio</text>
+  </g>
+</svg>

@@ -258,40 +258,9 @@ Haiku 4.5 is roughly 5× cheaper than Sonnet per token. Opus is roughly 5× more
 
 ## Architecture
 
-```
-                       ┌──────────────────────────────────┐
-                       │           Claude Code            │
-                       │       one mcpServers entry       │
-                       └────────────────┬─────────────────┘
-                                        │  stdio MCP
-                                        ▼
-   ┌────────────────────────────────────────────────────────────────────┐
-   │                        Context Governor                            │
-   │                                                                    │
-   │   gov.* intent tools     search_code  search_docs  browser_task    │
-   │                          project_tool  list_tools  tool_status     │
-   │                                                                    │
-   │   Control plane          dynamic tool list · env var expansion     │
-   │                          per-backend timeouts                      │
-   │                                                                    │
-   │   Runtime hygiene        secret redaction · 2 MB log rotation      │
-   │                          60-second idle cleanup                    │
-   └─────┬─────────────────────┬────────────────────────────┬───────────┘
-         │                     │                            │
-         ▼                     ▼                            ▼
-   ╔════════════════════════════════════════════════════════════════════╗
-   ║   Whatever MCP servers you already use                             ║
-   ║   (none of these ship with the governor — bring your own)          ║
-   ║                                                                    ║
-   ║   ┌──────────────────┐  ┌──────────────────┐  ┌──────────────────┐ ║
-   ║   │ any always_on    │  │ any on-demand    │  │ …and your own    │ ║
-   ║   │ backend          │  │ backend          │  │ MCP / API        │ ║
-   ║   │                  │  │                  │  │                  │ ║
-   ║   │ http or sse      │  │ stdio            │  │ http · sse       │ ║
-   ║   │ launchd-managed  │  │ spawned on call  │  │ · stdio          │ ║
-   ║   └──────────────────┘  └──────────────────┘  └──────────────────┘ ║
-   ╚════════════════════════════════════════════════════════════════════╝
-```
+<p align="center">
+  <img src="./assets/context_governor_architecture.svg" alt="Context Governor enterprise architecture" width="900">
+</p>
 
 The boxes on the bottom row are *examples* of what plugs in, not requirements. The governor doesn't ship any backend. It governs whichever MCP servers and skills you already have installed.
 
