@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="./assets/context_governor_logo_transparent.png" alt="Context Governor logo" width="820">
+  <img src="./assets/context_governor_logo_transparent.png" alt="Context Governor logo" width="410">
 </p>
 
 <h1 align="center">Claude Context Governor</h1>
