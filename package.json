@@ -17,6 +17,7 @@
     "refresh-tools": "node index.mjs --refresh-tools",
     "cleanup-idle": "node index.mjs --cleanup-idle",
     "install:dry": "node install.mjs --dry-run",
+    "test": "node --test",
     "test:smoke": "node index.mjs --status && echo '{\"user_prompt\":\"design the auth schema\"}' | node hooks/route-prompt.mjs"
   },
   "keywords": [

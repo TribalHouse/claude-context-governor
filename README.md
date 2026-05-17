@@ -5,7 +5,11 @@
 <h1 align="center">Claude Context Governor</h1>
 
 <p align="center">
-  <strong>The control plane for Claude Code.</strong>
+  <strong>Claude Code Control Plane for MCPs, Skills, and Model Routing.</strong>
+</p>
+
+<p align="center">
+  <em>Not memory restoration. Not another MCP server. A runtime governor for what enters Claude Code context.</em>
 </p>
 
 <p align="center">
@@ -29,8 +33,10 @@
   <a href="#configure-backends">Configure</a> ·
   <a href="#the-gov-tools">gov.* tools</a> ·
   <a href="#manage-skills">Skills</a> ·
+  <a href="#comparison">Comparison</a> ·
   <a href="#route-prompts-to-the-right-model">Routing</a> ·
   <a href="#architecture">Architecture</a> ·
+  <a href="#ship-tests-before-more-features">Tests</a> ·
   <a href="#faq">FAQ</a> ·
   <a href="./CONTRIBUTING.md">Contributing</a>
 </p>
@@ -72,6 +78,35 @@ Session start            ~30,500 tok   Session start              ~5,700 tok
 
 *Illustrative numbers from a typical power-user setup. Actual savings depend on which backends and skills you run. The governor doesn't make any single tool cheaper to call. It removes the cost of the ones you aren't calling.*
 
+## Measurement tooling
+
+Illustrative numbers are useful for explaining the shape of the problem, but the project needs first-class measurement commands before it can ask teams to trust savings claims in their own environments.
+
+Planned CLI:
+
+```bash
+context-governor measure
+context-governor measure --baseline ~/.claude/settings.json
+context-governor measure --skills
+context-governor measure --mcp
+```
+
+Target output:
+
+```text
+Baseline:
+12 MCP servers, 184 tools, estimated 18,420 tokens
+91 skills, estimated 11,740 tokens
+
+Governor:
+1 MCP entry, 12 gov tools, estimated 2,100 tokens
+24 active skills, estimated 3,200 tokens
+
+Estimated saved: 24,860 tokens / session
+```
+
+The goal is to make the promise concrete: show the before/after inventory, expose the assumptions behind token estimates, and let users compare their actual Claude Code setup instead of relying on generic examples.
+
 ## Highlights
 
 - **[One MCP entry, N backends](#configure-backends).** Multiplex whichever MCP servers you already use (Serena, Context7, Playwright, Supabase, GitHub, Figma, etc.) behind one connection. Nothing extra to install.
@@ -106,6 +141,14 @@ The governor doesn't compete with what you've installed. It decides when each th
 A load balancer doesn't replace web servers; it decides which one answers each request. A kernel scheduler doesn't replace processes; it decides which one runs next. The governor works the same way for Claude Code: your backends do the work, your skills carry the prompts, and the governor decides which ones are awake, loaded, and routed for the session you're in right now.
 
 You can uninstall it in 30 seconds. Delete the `mcpServers.context-governor` entry, restore your original MCP entries from the `settings.json.backup-*` file the installer wrote, and you're back where you started. Nothing about your existing setup is destructive or one-way.
+
+## Comparison
+
+Context Governor focuses on preventing unnecessary context from entering the session in the first place: dormant MCP tools, inactive skills, and wrong-model workflows.
+
+That makes it different from tools that primarily help recover, summarize, or reuse context after a session has already grown. Those approaches can be valuable. They solve a different problem. Context Governor sits earlier in the path and asks whether a backend, skill, hook, or route should enter Claude Code context at all.
+
+It is also not trying to be a better MCP server than the servers you already use. It is a control plane above them: one Claude Code entry, governed fan-out underneath, and reversible configuration if you decide to go back.
 
 ## Install
 
@@ -266,6 +309,31 @@ The boxes on the bottom row are *examples* of what plugs in, not requirements. T
 
 Same protocol on both sides. The MCP SDK supports server and client roles in the same process; the governor uses both. No translation layer, no proprietary wire format.
 
+## Ship tests before more features
+
+The project should prove the control plane before expanding the surface area. Until this suite is in place, Context Governor should be treated as a clever MVP, not robust infrastructure.
+
+Current test command:
+
+```bash
+npm test
+```
+
+Minimum serious suite:
+
+- Registry parser tests
+- Env-var expansion tests
+- Secret redaction tests
+- Tool-list filtering tests
+- Disabled backend tests
+- On-demand lifecycle tests with a fake stdio MCP server
+- Timeout/disconnect tests
+- Skill enable/disable/status tests
+- Prompt-router classification tests
+- Installer dry-run test
+
+The fake MCP harness is priority one because MCP routing is the core product. It should simulate stdio startup, tool listing, tool calls, slow responses, disconnects, malformed responses, and disabled backends without requiring real third-party services.
+
 ## FAQ
 
 **Do parked skills still work?**
@@ -285,10 +353,11 @@ Each `mcpServers` entry opens a connection at session start and registers its to
 
 ## Roadmap
 
+- [ ] Fake MCP test harness for stdio lifecycle, tool listing, calls, timeouts, and disconnects
+- [ ] `context-governor measure` with MCP, skill, baseline, and estimated-token reports
 - [ ] Linux `mcpd` (systemd units to replace launchd plists)
 - [ ] Health checks and auto-restart for always-on services
 - [ ] Per-backend rate limits in the registry
-- [ ] Mock-MCP test harness
 
 Open an issue if you'd take one.
 
