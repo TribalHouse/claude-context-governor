@@ -1,11 +1,11 @@
 {
-  "_comment": "Context Governor MCP Registry. Copy to registry.json and edit. Each top-level key is a backend; gov.* shortcut tools only appear if their expected backend name is registered. See README.md for the full schema and the gov.*-tool contract.",
+  "_comment": "Copy to registry.json and edit. Each top-level key is a backend. gov.* shortcut tools only appear when their expected backend name is registered. See docs/registry.md for the full annotated guide.",
   "_settings": {
     "exposePassthroughTools": false
   },
 
   "serena": {
-    "description": "Code intelligence — symbols, references, diagnostics. Powers gov.search_code.",
+    "description": "Code intelligence. Powers gov.search_code.",
     "transport": "streamable-http",
     "endpoint": "http://127.0.0.1:12301/mcp",
     "always_on": true,
@@ -13,7 +13,7 @@
   },
 
   "context7": {
-    "description": "Library and framework documentation lookup. Powers gov.search_docs.",
+    "description": "Library and framework docs. Powers gov.search_docs.",
     "transport": "streamable-http",
     "endpoint": "http://127.0.0.1:12302/mcp",
     "always_on": true,
@@ -21,28 +21,36 @@
   },
 
   "playwright": {
-    "description": "Browser automation and end-to-end testing. Powers gov.browser_task.",
+    "description": "Browser automation. Powers gov.browser_task.",
     "transport": "stdio",
     "command": "npx",
-    "args": ["-y", "@playwright/mcp@latest"],
+    "args": [
+      "-y",
+      "@playwright/mcp@latest"
+    ],
     "always_on": false,
     "disabled": false,
     "idle_timeout_seconds": 300
   },
 
   "github": {
-    "description": "GitHub repository, issue, and pull request management. Reachable via gov.project_tool.",
+    "description": "GitHub repository, issue, and PR management.",
     "transport": "stdio",
     "command": "npx",
-    "args": ["-y", "@modelcontextprotocol/server-github"],
-    "env_passthrough": ["GITHUB_PERSONAL_ACCESS_TOKEN"],
+    "args": [
+      "-y",
+      "@modelcontextprotocol/server-github"
+    ],
+    "env_passthrough": [
+      "GITHUB_PERSONAL_ACCESS_TOKEN"
+    ],
     "always_on": false,
     "disabled": false,
     "idle_timeout_seconds": 600
   },
 
   "example-http-backend": {
-    "description": "Example HTTP backend with env-var-driven auth header. Use ${ENV_VAR} placeholders in headers — the governor interpolates them at connect time so secrets stay out of registry.json.",
+    "description": "HTTP backend with env-var auth. Disabled until configured.",
     "transport": "streamable-http",
     "endpoint": "https://example.com/mcp",
     "headers": {

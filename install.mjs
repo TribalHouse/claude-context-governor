@@ -173,6 +173,7 @@ const SOURCE_FILES = [
   'skill-use',
   'hooks',
   'lib',
+  'src',
   'scripts',
   'benchmarks',
   'tests',

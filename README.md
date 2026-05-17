@@ -33,6 +33,7 @@
   <a href="#configure-backends">Configure</a> ·
   <a href="#the-gov-tools">gov.* tools</a> ·
   <a href="#manage-skills">Skills</a> ·
+  <a href="./docs/testing.md">Verification</a> ·
   <a href="#comparison">Comparison</a> ·
   <a href="#audit-trail">Audit</a> ·
   <a href="#route-prompts-to-the-right-model">Routing</a> ·
@@ -202,9 +203,15 @@ node install.mjs --dry-run        # show every action, write nothing
 node install.mjs --no-settings    # install files, leave settings.json alone
 ```
 
+Verify locally:
+
+```bash
+npm run verify
+```
+
 ## Configure backends
 
-Drop one block per MCP server you already use into `~/.claude/context-governor/registry.json`. The block tells the governor how to reach the backend and how to manage its lifecycle. **The names below (`serena`, `playwright`, `private-api`) are just example identifiers, not required backends.** Pick whatever names match your setup. Three lifecycle modes:
+Drop one block per MCP server you already use into `~/.claude/context-governor/registry.json`. The block tells the governor how to reach the backend and how to manage its lifecycle. **The names below (`serena`, `playwright`, `private-api`) are just example identifiers, not required backends.** Pick whatever names match your setup. See [`docs/registry.md`](./docs/registry.md) for the annotated registry guide. Three lifecycle modes:
 
 ```jsonc
 {
@@ -352,6 +359,8 @@ Current verification commands:
 
 ```bash
 npm test
+npm run test:unit
+npm run test:runtime
 npm run verify
 ```
 

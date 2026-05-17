@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 jobs:
-  smoke:
+  verify:
     name: Node ${{ matrix.node }} on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
@@ -55,7 +55,7 @@ jobs:
           out=$(echo '{"user_prompt":"add a tooltip to the button"}' | node ${{ runner.temp }}/cg-test/context-governor/hooks/route-prompt.mjs)
           if [ -n "$out" ]; then echo "expected no output for sonnet route, got: $out"; exit 1; fi
 
-      - name: Skill governor smoke
+      - name: Skill governor CLI
         run: |
           mkdir -p ${{ runner.temp }}/cg-test/skills/example-skill
           CLAUDE_HOME=${{ runner.temp }}/cg-test ${{ runner.temp }}/cg-test/context-governor/skill-status --search example
