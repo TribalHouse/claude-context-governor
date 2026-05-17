@@ -178,6 +178,7 @@ const SOURCE_FILES = [
   'benchmarks',
   'tests',
   'assets',
+  'docs',
 ];
 
 // Files copied into MCPD_DIR (sibling of CG_DIR).
