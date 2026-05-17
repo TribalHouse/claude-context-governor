@@ -1,0 +1,233 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 170" width="1200" height="170" shape-rendering="crispEdges" role="img" aria-labelledby="title desc">
+  <title id="title">Looping 8-bit Context Governor octopus</title>
+  <desc id="desc">A transparent SVG with an 8-bit octopus mascot moving smoothly from the left edge to the right edge in a perfect loop.</desc>
+  <defs>
+    <style>
+      .outline { fill:#F4F2EF; }
+      .red { fill:#F10D23; }
+      .red-dark { fill:#C20B1C; }
+      .black { fill:#090A12; }
+      .white { fill:#FFFFFF; }
+      .bob { animation:bob 1.2s steps(2,end) infinite; transform-origin:100px 84px; }
+      .frame-a { opacity:1; animation:frameA .72s steps(1,end) infinite; }
+      .frame-b { opacity:0; animation:frameB .72s steps(1,end) infinite; }
+      .eye-open { opacity:1; animation:eyeOpen 4s steps(1,end) infinite; }
+      .eye-blink { opacity:0; animation:eyeBlink 4s steps(1,end) infinite; }
+      @keyframes bob {
+        0%,100% { transform: translateY(0px); }
+        50% { transform: translateY(3px); }
+      }
+      @keyframes frameA {
+        0%,49.9%,100% { opacity:1; }
+        50%,99.9% { opacity:0; }
+      }
+      @keyframes frameB {
+        0%,49.9% { opacity:0; }
+        50%,99.9%,100% { opacity:1; }
+      }
+      @keyframes eyeOpen {
+        0%,86%,100% { opacity:1; }
+        87%,92% { opacity:0; }
+      }
+      @keyframes eyeBlink {
+        0%,86%,100% { opacity:0; }
+        87%,92% { opacity:1; }
+      }
+    </style>
+    <symbol id="octo" viewBox="0 0 200 170">
+      <g class="bob">
+        <!-- FRAME A -->
+        <g class="frame-a">
+          <!-- head outline -->
+          <rect class="outline" x="72" y="6" width="56" height="8"/>
+          <rect class="outline" x="64" y="14" width="8" height="8"/>
+          <rect class="outline" x="128" y="14" width="8" height="8"/>
+          <rect class="outline" x="56" y="22" width="8" height="48"/>
+          <rect class="outline" x="136" y="22" width="8" height="48"/>
+          <rect class="outline" x="48" y="30" width="8" height="24"/>
+          <rect class="outline" x="144" y="30" width="8" height="24"/>
+          <rect class="outline" x="64" y="70" width="8" height="8"/>
+          <rect class="outline" x="128" y="70" width="8" height="8"/>
+          <rect class="outline" x="72" y="78" width="56" height="8"/>
+          <!-- tentacle outline A -->
+          <rect class="outline" x="36" y="86" width="28" height="8"/>
+          <rect class="outline" x="136" y="86" width="28" height="8"/>
+          <rect class="outline" x="28" y="94" width="20" height="8"/>
+          <rect class="outline" x="56" y="94" width="16" height="8"/>
+          <rect class="outline" x="128" y="94" width="16" height="8"/>
+          <rect class="outline" x="152" y="94" width="20" height="8"/>
+          <rect class="outline" x="20" y="102" width="20" height="8"/>
+          <rect class="outline" x="48" y="102" width="24" height="8"/>
+          <rect class="outline" x="128" y="102" width="24" height="8"/>
+          <rect class="outline" x="160" y="102" width="20" height="8"/>
+          <rect class="outline" x="28" y="110" width="20" height="8"/>
+          <rect class="outline" x="72" y="110" width="56" height="8"/>
+          <rect class="outline" x="152" y="110" width="20" height="8"/>
+          <rect class="outline" x="44" y="118" width="20" height="8"/>
+          <rect class="outline" x="72" y="118" width="16" height="8"/>
+          <rect class="outline" x="112" y="118" width="16" height="8"/>
+          <rect class="outline" x="136" y="118" width="20" height="8"/>
+          <rect class="outline" x="60" y="126" width="20" height="8"/>
+          <rect class="outline" x="120" y="126" width="20" height="8"/>
+          <rect class="outline" x="84" y="134" width="32" height="8"/>
+
+          <!-- red body -->
+          <rect class="red" x="72" y="14" width="56" height="64"/>
+          <rect class="red" x="64" y="22" width="8" height="48"/>
+          <rect class="red" x="128" y="22" width="8" height="48"/>
+          <rect class="red" x="56" y="30" width="8" height="24"/>
+          <rect class="red" x="136" y="30" width="8" height="24"/>
+          <rect class="red-dark" x="72" y="14" width="8" height="64"/>
+          <rect class="red-dark" x="120" y="14" width="8" height="64"/>
+          <rect class="red-dark" x="72" y="70" width="56" height="8"/>
+
+          <!-- red tentacles A -->
+          <rect class="red" x="44" y="86" width="20" height="8"/>
+          <rect class="red" x="136" y="86" width="20" height="8"/>
+          <rect class="red" x="36" y="94" width="12" height="8"/>
+          <rect class="red" x="56" y="94" width="8" height="8"/>
+          <rect class="red" x="136" y="94" width="8" height="8"/>
+          <rect class="red" x="152" y="94" width="12" height="8"/>
+          <rect class="red" x="28" y="102" width="12" height="8"/>
+          <rect class="red" x="48" y="102" width="16" height="8"/>
+          <rect class="red" x="136" y="102" width="16" height="8"/>
+          <rect class="red" x="160" y="102" width="12" height="8"/>
+          <rect class="red" x="36" y="110" width="12" height="8"/>
+          <rect class="red" x="72" y="110" width="56" height="8"/>
+          <rect class="red" x="152" y="110" width="12" height="8"/>
+          <rect class="red" x="52" y="118" width="12" height="8"/>
+          <rect class="red" x="72" y="118" width="16" height="8"/>
+          <rect class="red" x="112" y="118" width="16" height="8"/>
+          <rect class="red" x="136" y="118" width="12" height="8"/>
+          <rect class="red" x="68" y="126" width="12" height="8"/>
+          <rect class="red" x="120" y="126" width="12" height="8"/>
+          <rect class="red" x="88" y="134" width="24" height="8"/>
+
+          <!-- face -->
+          <g class="eye-open">
+            <rect class="black" x="84" y="42" width="12" height="12"/>
+            <rect class="black" x="104" y="42" width="12" height="12"/>
+            <rect class="white" x="88" y="46" width="4" height="4"/>
+            <rect class="white" x="108" y="46" width="4" height="4"/>
+          </g>
+          <g class="eye-blink">
+            <rect class="black" x="84" y="46" width="12" height="4"/>
+            <rect class="black" x="104" y="46" width="12" height="4"/>
+          </g>
+          <rect class="black" x="92" y="62" width="16" height="4"/>
+          <rect class="black" x="96" y="66" width="8" height="4"/>
+
+          <!-- governor tie / chest -->
+          <rect class="outline" x="88" y="78" width="24" height="8"/>
+          <rect class="black" x="96" y="86" width="8" height="8"/>
+          <rect class="outline" x="84" y="86" width="8" height="8"/>
+          <rect class="outline" x="104" y="86" width="8" height="8"/>
+          <rect class="outline" x="92" y="94" width="16" height="8"/>
+          <rect class="red" x="96" y="94" width="8" height="8"/>
+          <rect class="outline" x="92" y="102" width="16" height="16"/>
+          <rect class="black" x="96" y="106" width="8" height="8"/>
+        </g>
+
+        <!-- FRAME B -->
+        <g class="frame-b">
+          <!-- head outline -->
+          <rect class="outline" x="72" y="6" width="56" height="8"/>
+          <rect class="outline" x="64" y="14" width="8" height="8"/>
+          <rect class="outline" x="128" y="14" width="8" height="8"/>
+          <rect class="outline" x="56" y="22" width="8" height="48"/>
+          <rect class="outline" x="136" y="22" width="8" height="48"/>
+          <rect class="outline" x="48" y="30" width="8" height="24"/>
+          <rect class="outline" x="144" y="30" width="8" height="24"/>
+          <rect class="outline" x="64" y="70" width="8" height="8"/>
+          <rect class="outline" x="128" y="70" width="8" height="8"/>
+          <rect class="outline" x="72" y="78" width="56" height="8"/>
+          <!-- tentacle outline B -->
+          <rect class="outline" x="44" y="86" width="20" height="8"/>
+          <rect class="outline" x="136" y="86" width="20" height="8"/>
+          <rect class="outline" x="28" y="94" width="24" height="8"/>
+          <rect class="outline" x="60" y="94" width="16" height="8"/>
+          <rect class="outline" x="124" y="94" width="16" height="8"/>
+          <rect class="outline" x="148" y="94" width="24" height="8"/>
+          <rect class="outline" x="20" y="102" width="16" height="8"/>
+          <rect class="outline" x="44" y="102" width="24" height="8"/>
+          <rect class="outline" x="132" y="102" width="24" height="8"/>
+          <rect class="outline" x="164" y="102" width="16" height="8"/>
+          <rect class="outline" x="32" y="110" width="16" height="8"/>
+          <rect class="outline" x="72" y="110" width="56" height="8"/>
+          <rect class="outline" x="152" y="110" width="16" height="8"/>
+          <rect class="outline" x="48" y="118" width="16" height="8"/>
+          <rect class="outline" x="76" y="118" width="12" height="8"/>
+          <rect class="outline" x="112" y="118" width="12" height="8"/>
+          <rect class="outline" x="136" y="118" width="16" height="8"/>
+          <rect class="outline" x="64" y="126" width="16" height="8"/>
+          <rect class="outline" x="120" y="126" width="16" height="8"/>
+          <rect class="outline" x="88" y="134" width="24" height="8"/>
+
+          <!-- red body -->
+          <rect class="red" x="72" y="14" width="56" height="64"/>
+          <rect class="red" x="64" y="22" width="8" height="48"/>
+          <rect class="red" x="128" y="22" width="8" height="48"/>
+          <rect class="red" x="56" y="30" width="8" height="24"/>
+          <rect class="red" x="136" y="30" width="8" height="24"/>
+          <rect class="red-dark" x="72" y="14" width="8" height="64"/>
+          <rect class="red-dark" x="120" y="14" width="8" height="64"/>
+          <rect class="red-dark" x="72" y="70" width="56" height="8"/>
+
+          <!-- red tentacles B -->
+          <rect class="red" x="44" y="86" width="12" height="8"/>
+          <rect class="red" x="144" y="86" width="12" height="8"/>
+          <rect class="red" x="36" y="94" width="16" height="8"/>
+          <rect class="red" x="60" y="94" width="8" height="8"/>
+          <rect class="red" x="132" y="94" width="8" height="8"/>
+          <rect class="red" x="148" y="94" width="16" height="8"/>
+          <rect class="red" x="28" y="102" width="8" height="8"/>
+          <rect class="red" x="44" y="102" width="16" height="8"/>
+          <rect class="red" x="140" y="102" width="16" height="8"/>
+          <rect class="red" x="164" y="102" width="8" height="8"/>
+          <rect class="red" x="40" y="110" width="8" height="8"/>
+          <rect class="red" x="72" y="110" width="56" height="8"/>
+          <rect class="red" x="152" y="110" width="8" height="8"/>
+          <rect class="red" x="52" y="118" width="8" height="8"/>
+          <rect class="red" x="76" y="118" width="8" height="8"/>
+          <rect class="red" x="116" y="118" width="8" height="8"/>
+          <rect class="red" x="140" y="118" width="8" height="8"/>
+          <rect class="red" x="68" y="126" width="8" height="8"/>
+          <rect class="red" x="124" y="126" width="8" height="8"/>
+          <rect class="red" x="92" y="134" width="16" height="8"/>
+
+          <!-- face -->
+          <g class="eye-open">
+            <rect class="black" x="84" y="42" width="12" height="12"/>
+            <rect class="black" x="104" y="42" width="12" height="12"/>
+            <rect class="white" x="88" y="46" width="4" height="4"/>
+            <rect class="white" x="108" y="46" width="4" height="4"/>
+          </g>
+          <g class="eye-blink">
+            <rect class="black" x="84" y="46" width="12" height="4"/>
+            <rect class="black" x="104" y="46" width="12" height="4"/>
+          </g>
+          <rect class="black" x="92" y="62" width="16" height="4"/>
+          <rect class="black" x="96" y="66" width="8" height="4"/>
+
+          <!-- governor tie / chest -->
+          <rect class="outline" x="88" y="78" width="24" height="8"/>
+          <rect class="black" x="96" y="86" width="8" height="8"/>
+          <rect class="outline" x="84" y="86" width="8" height="8"/>
+          <rect class="outline" x="104" y="86" width="8" height="8"/>
+          <rect class="outline" x="92" y="94" width="16" height="8"/>
+          <rect class="red" x="96" y="94" width="8" height="8"/>
+          <rect class="outline" x="92" y="102" width="16" height="16"/>
+          <rect class="black" x="96" y="106" width="8" height="8"/>
+        </g>
+      </g>
+    </symbol>
+  </defs>
+
+  <!-- Off-screen start and off-screen end so the reset happens invisibly -->
+  <g>
+    <g transform="translate(-220 8)">
+      <animateTransform attributeName="transform" type="translate" from="-220 8" to="1220 8" dur="8s" repeatCount="indefinite"/>
+      <use href="#octo" width="200" height="170"/>
+    </g>
+  </g>
+</svg>

@@ -352,6 +352,12 @@ Claude Code MCP aggregator, Claude Code MCP router, MCP gateway, MCP proxy, mult
   </sub>
 </p>
 
+<br>
+
+<p align="center">
+  <img src="./assets/context_governor_octopu.svg" alt="Looping 8-bit Context Governor octopus" width="900">
+</p>
+
 <!--
 Maintainer notes:
 
