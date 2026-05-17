@@ -15,6 +15,11 @@ jobs:
       matrix:
         node: ['18', '20', '22']
         os: [ubuntu-latest, macos-latest]
+
+    env:
+      CG_HOME: ${{ runner.temp }}/cg-test
+      CG_DIR: ${{ runner.temp }}/cg-test/context-governor
+
     steps:
       - uses: actions/checkout@v4
 
@@ -26,32 +31,32 @@ jobs:
         run: npm install
 
       - name: Installer dry-run
-        run: CLAUDE_HOME=${{ runner.temp }}/cg-test node install.mjs --dry-run --no-settings
+        run: CLAUDE_HOME=${{ env.CG_HOME }} node install.mjs --dry-run --no-settings
 
       - name: Installer apply
-        run: CLAUDE_HOME=${{ runner.temp }}/cg-test node install.mjs --no-settings
+        run: CLAUDE_HOME=${{ env.CG_HOME }} node install.mjs --no-settings
 
       - name: Governor --status (empty registry)
-        run: node index.mjs --status
+        run: node ${{ env.CG_DIR }}/index.mjs --status
 
       - name: Routing hook — opus prompt
         run: |
-          out=$(echo '{"user_prompt":"design the auth migration schema"}' | node hooks/route-prompt.mjs)
+          out=$(echo '{"user_prompt":"design the auth migration schema"}' | node ${{ env.CG_DIR }}/hooks/route-prompt.mjs)
           echo "$out"
           echo "$out" | grep -q "opus" || (echo "expected opus advice"; exit 1)
 
       - name: Routing hook — haiku prompt
         run: |
-          out=$(echo '{"user_prompt":"why is the test failing"}' | node hooks/route-prompt.mjs)
+          out=$(echo '{"user_prompt":"why is the test failing"}' | node ${{ env.CG_DIR }}/hooks/route-prompt.mjs)
           echo "$out"
           echo "$out" | grep -q "haiku" || (echo "expected haiku advice"; exit 1)
 
       - name: Routing hook — sonnet prompt (silent)
         run: |
-          out=$(echo '{"user_prompt":"add a tooltip to the button"}' | node hooks/route-prompt.mjs)
+          out=$(echo '{"user_prompt":"add a tooltip to the button"}' | node ${{ env.CG_DIR }}/hooks/route-prompt.mjs)
           if [ -n "$out" ]; then echo "expected no output for sonnet route, got: $out"; exit 1; fi
 
       - name: Skill governor smoke
         run: |
-          mkdir -p ${{ runner.temp }}/cg-test/skills/example-skill
-          HOME=${{ runner.temp }}/cg-test ./skill-status --search example
+          mkdir -p ${{ env.CG_HOME }}/skills/example-skill
+          CLAUDE_HOME=${{ env.CG_HOME }} ${{ env.CG_DIR }}/skill-status --search example
