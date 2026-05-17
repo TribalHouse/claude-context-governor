@@ -8,7 +8,7 @@ import { spawnSync } from 'node:child_process';
 test('installer dry-run reports planned actions without writing install files', () => {
   const home = fs.mkdtempSync(path.join(os.tmpdir(), 'cg-install-'));
   const result = spawnSync(process.execPath, ['install.mjs', '--dry-run'], {
-    cwd: new URL('..', import.meta.url),
+    cwd: new URL('../..', import.meta.url),
     env: { ...process.env, CLAUDE_HOME: home },
     encoding: 'utf8',
   });

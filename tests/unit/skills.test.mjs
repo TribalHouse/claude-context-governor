@@ -15,7 +15,7 @@ async function loadSkillsFixture() {
   fs.mkdirSync(inactiveDir, { recursive: true });
   fs.mkdirSync(governorDir, { recursive: true });
 
-  const moduleUrl = new URL(`../lib/skills.mjs?fixture=${Date.now()}-${Math.random()}`, import.meta.url);
+  const moduleUrl = new URL(`../../lib/skills.mjs?fixture=${Date.now()}-${Math.random()}`, import.meta.url);
   const skills = await import(moduleUrl);
 
   return { home, skillsDir, inactiveDir, governorDir, skills };

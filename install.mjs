@@ -179,6 +179,8 @@ const SOURCE_FILES = [
   'tests',
   'assets',
   'docs',
+  'types',
+  'tsconfig.json',
 ];
 
 // Files copied into MCPD_DIR (sibling of CG_DIR).
@@ -187,7 +189,8 @@ const MCPD_FILES = ['start.sh', 'stop.sh', 'status.sh'];
 function copyRecursive(src, dest) {
   const stat = fs.statSync(src);
   if (stat.isDirectory()) {
-    if (!fs.existsSync(dest)) fs.mkdirSync(dest, { recursive: true });
+    fs.rmSync(dest, { recursive: true, force: true });
+    fs.mkdirSync(dest, { recursive: true });
     for (const entry of fs.readdirSync(src)) {
       copyRecursive(path.join(src, entry), path.join(dest, entry));
     }

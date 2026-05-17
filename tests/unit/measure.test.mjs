@@ -4,7 +4,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
-import { collectMeasurement, formatMeasurement } from '../lib/measure.mjs';
+import { collectMeasurement, formatMeasurement } from '../../lib/measure.mjs';
 
 function fixture() {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'cg-measure-'));
@@ -63,7 +63,7 @@ test('context-governor measure runs without registry.json in the repo root', () 
     '--skills-dir',
     paths.skillsDir,
   ], {
-    cwd: new URL('..', import.meta.url),
+    cwd: new URL('../..', import.meta.url),
     encoding: 'utf8',
   });
 

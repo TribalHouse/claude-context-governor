@@ -35,6 +35,8 @@ import { fileURLToPath } from 'url';
 import { formatAuditReport, readAuditEvents, writeAuditEvent } from './lib/audit.mjs';
 import { expandHeaders, redact } from './lib/core.mjs';
 import { collectMeasurement, formatMeasurement, parseMeasureArgs } from './lib/measure.mjs';
+import { parsePrefix, prefixed } from './src/mcp/names.mjs';
+import { buildGovTools } from './src/tools/gov-tools.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const REGISTRY_PATH = process.env.CONTEXT_GOVERNOR_REGISTRY_PATH || path.join(__dirname, 'registry.json');
@@ -191,23 +193,6 @@ setInterval(async () => {
     }
   }
 }, 60_000).unref();
-
-// ─── Tool name helpers ──────────────────────────────────────────────────────
-
-const SEP = '__';
-
-function prefixed(backendName, toolName) {
-  return `${backendName}${SEP}${toolName}`;
-}
-
-function parsePrefix(prefixedName) {
-  const idx = prefixedName.indexOf(SEP);
-  if (idx < 1) return null;
-  return {
-    backend: prefixedName.slice(0, idx),
-    tool: prefixedName.slice(idx + SEP.length),
-  };
-}
 
 // ─── Shared helpers ──────────────────────────────────────────────────────────
 
@@ -392,232 +377,12 @@ async function doCleanupIdle(force = false) {
   return killed;
 }
 
-// ─── Gov tool definitions ────────────────────────────────────────────────────
-
-// Intent tools are bound to specific backend names + tool names. The
-// builder below only exposes an intent tool if its backend is registered.
-// This avoids surfacing tools that would fail with "Unknown backend".
-const INTENT_BACKENDS = {
-  search_code: 'serena',      // expects: find_symbol, find_referencing_symbols, ...
-  search_docs: 'context7',    // expects: resolve-library-id, query-docs
-  browser_task: 'playwright', // expects: browser_navigate, browser_click, ...
-};
-
-const GOV_TOOL_DEFS = {
-  search_code: {
-    name: 'gov.search_code',
-    description: [
-      `Search the codebase for symbols, definitions, references, and diagnostics. Routes to backend "${INTENT_BACKENDS.search_code}" — expects Serena's tool surface (find_symbol, find_referencing_symbols, get_symbols_overview, etc.).`,
-      'mode=search → find_symbol (default)',
-      'mode=overview → get_symbols_overview (all symbols in file or project)',
-      'mode=references → find_referencing_symbols',
-      'mode=diagnostics → get_diagnostics_for_file (requires file)',
-      'mode=implementations → find_implementations',
-    ].join('\n'),
-    inputSchema: {
-      type: 'object',
-      properties: {
-        query: {
-          type: 'string',
-          description: 'Symbol name, search term, or description of what to find',
-        },
-        file: {
-          type: 'string',
-          description: 'Optional: restrict to this file path (relative to project root)',
-        },
-        symbol: {
-          type: 'string',
-          description: 'Optional: explicit symbol name (overrides query for symbol lookup)',
-        },
-        mode: {
-          type: 'string',
-          enum: ['search', 'symbol', 'overview', 'references', 'implementations', 'diagnostics'],
-          description: 'Lookup strategy. Defaults to search (find_symbol).',
-        },
-      },
-      required: ['query'],
-    },
-  },
-  search_docs: {
-    name: 'gov.search_docs',
-    description: [
-      `Look up documentation for any library, framework, or API. Routes to backend "${INTENT_BACKENDS.search_docs}" — expects Context7's tool surface (resolve-library-id + query-docs).`,
-      'Automatically resolves the library ID then queries docs in one call.',
-      'Examples: react/useEffect, supabase/row-level-security, nextjs/app-router',
-    ].join('\n'),
-    inputSchema: {
-      type: 'object',
-      properties: {
-        library: {
-          type: 'string',
-          description: 'Library or framework name (e.g. "react", "supabase", "nextjs", "typescript")',
-        },
-        topic: {
-          type: 'string',
-          description: 'Topic or question (e.g. "useEffect cleanup", "RLS policies", "middleware")',
-        },
-        version: {
-          type: 'string',
-          description: 'Optional version hint (e.g. "18", "2.x")',
-        },
-      },
-      required: ['library', 'topic'],
-    },
-  },
-  browser_task: {
-    name: 'gov.browser_task',
-    description: [
-      `Run browser automation — navigation, screenshots, snapshots, interaction. Routes to backend "${INTENT_BACKENDS.browser_task}" — expects Playwright's tool surface (browser_navigate, browser_click, browser_fill, etc.). Starts on demand, stops after idle.`,
-      'action=snapshot (default): navigate + return accessibility tree',
-      'action=screenshot: navigate + take screenshot',
-      'action=navigate: navigate only',
-      'action=evaluate: run JS via params.script',
-      'action=click: click element via params.selector',
-      'action=fill: fill input via params.selector + params.value',
-    ].join('\n'),
-    inputSchema: {
-      type: 'object',
-      properties: {
-        task: {
-          type: 'string',
-          description: 'What to do in the browser (human-readable description)',
-        },
-        url: {
-          type: 'string',
-          description: 'Optional: URL to navigate to before the action',
-        },
-        action: {
-          type: 'string',
-          enum: ['snapshot', 'screenshot', 'navigate', 'evaluate', 'click', 'fill'],
-          description: 'Browser action. Defaults to snapshot.',
-        },
-        params: {
-          type: 'object',
-          description: 'Action-specific params: selector, value, script, fullPage, etc.',
-        },
-      },
-      required: ['task'],
-    },
-  },
-};
-
-// Static gov tools — always available, do not depend on registered backends.
-const GOV_TOOL_STATIC = [
-  {
-    name: 'gov.list_tools',
-    description: 'List all available tools grouped by purpose. Shows gov.* tools and backend groups. Set show_backend_tools=true for full raw list.',
-    inputSchema: {
-      type: 'object',
-      properties: {
-        show_backend_tools: {
-          type: 'boolean',
-          description: 'If true, list all raw backend tool names (verbose)',
-        },
-        filter: {
-          type: 'string',
-          description: 'Optional: filter by backend name or keyword',
-        },
-      },
-    },
-  },
-  {
-    name: 'gov.tool_status',
-    description: 'Show running/stopped status of all MCP backends. Equivalent to --status CLI flag.',
-    inputSchema: {
-      type: 'object',
-      properties: {
-        backend: {
-          type: 'string',
-          description: 'Optional: show status for a single backend only',
-        },
-      },
-    },
-  },
-  {
-    name: 'gov.cleanup_idle',
-    description: 'Stop any running on-demand backend processes. Never stops shared (always_on) services.',
-    inputSchema: {
-      type: 'object',
-      properties: {
-        force: {
-          type: 'boolean',
-          description: 'If true, stop all on-demand backends even if recently used',
-        },
-      },
-    },
-  },
-];
-
-// Build the gov tool list dynamically — only show intent tools whose backend
-// is actually registered, and derive gov.project_tool's target enum from
-// on-demand backends in the registry.
-function buildGovTools() {
-  const registeredBackends = new Set(
-    Object.entries(registry)
-      .filter(([k, v]) => !k.startsWith('_') && !v.disabled)
-      .map(([k]) => k)
-  );
-
-  const tools = [];
-
-  // Intent tools — only if their bound backend is registered + enabled.
-  for (const [key, backendName] of Object.entries(INTENT_BACKENDS)) {
-    if (registeredBackends.has(backendName)) {
-      tools.push(GOV_TOOL_DEFS[key]);
-    }
-  }
-
-  // gov.project_tool — covers every on-demand backend NOT already covered by a
-  // dedicated intent tool. Skip it entirely if there are no on-demand targets.
-  const intentCovered = new Set(Object.values(INTENT_BACKENDS));
-  const projectTargets = [...registeredBackends]
-    .filter(name => !registry[name].always_on && !intentCovered.has(name))
-    .sort();
-
-  if (projectTargets.length > 0) {
-    tools.push({
-      name: 'gov.project_tool',
-      description: [
-        `Access on-demand backends by name. Currently registered: ${projectTargets.join(', ')}.`,
-        'Starts the backend on demand. Stops after idle.',
-        'If tool is omitted: lists available tools for the target (from cache — no backend startup if cache populated).',
-        'If tool is provided: calls target__tool with args.',
-        'Example: target=github tool=list_pull_requests args={owner:"org",repo:"name"}',
-      ].join('\n'),
-      inputSchema: {
-        type: 'object',
-        properties: {
-          target: {
-            type: 'string',
-            enum: projectTargets,
-            description: 'Which backend to use',
-          },
-          tool: {
-            type: 'string',
-            description: 'Optional: specific tool name without prefix. If omitted, lists available tools.',
-          },
-          args: {
-            type: 'object',
-            description: 'Optional: arguments to pass to the tool',
-          },
-        },
-        required: ['target'],
-      },
-    });
-  }
-
-  // Always-available tools last
-  tools.push(...GOV_TOOL_STATIC);
-
-  return tools;
-}
-
 // ─── Aggregate tool list ─────────────────────────────────────────────────────
 
 function buildToolList() {
   // Gov tools always appear first so Claude encounters them before passthrough tools.
   // Built dynamically — intent tools whose backend isn't registered are hidden.
-  const tools = buildGovTools().map(t => ({ ...t }));
+  const tools = buildGovTools(registry).map(t => ({ ...t }));
 
   // Only expose raw backend passthrough tools when explicitly enabled
   const settings = registry._settings || {};
@@ -818,7 +583,7 @@ function handleListTools({ show_backend_tools = false, filter } = {}) {
   const lines = ['', 'Context Governor — Available Tools', '═'.repeat(60), ''];
 
   lines.push('High-level intent tools (use these):');
-  for (const t of buildGovTools()) {
+  for (const t of buildGovTools(registry)) {
     if (filter && !t.name.includes(filter) && !t.description.includes(filter)) continue;
     lines.push(`  ${t.name}`);
     lines.push(`    ${t.description.split('\n')[0]}`);

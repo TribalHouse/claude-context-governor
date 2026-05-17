@@ -8,7 +8,7 @@ import {
   listVisibleBackendTools,
   redact,
   registryBackends,
-} from '../lib/core.mjs';
+} from '../../lib/core.mjs';
 
 test('parses registry backends and filters disabled entries', () => {
   const registry = {

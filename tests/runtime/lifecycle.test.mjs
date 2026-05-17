@@ -6,10 +6,10 @@ import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js';
-import { readAuditEvents } from '../lib/audit.mjs';
+import { readAuditEvents } from '../../lib/audit.mjs';
 
-const repoRoot = new URL('..', import.meta.url);
-const fakeMcpPath = new URL('./fixtures/fake-stdio-mcp.mjs', import.meta.url);
+const repoRoot = new URL('../..', import.meta.url);
+const fakeMcpPath = new URL('../fixtures/fake-stdio-mcp.mjs', import.meta.url);
 
 function makeRuntimeFixture({ timeoutSeconds = 1 } = {}) {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'cg-runtime-'));
@@ -43,7 +43,7 @@ function fileURLPath(url) {
 async function withGovernor(fixture, fn) {
   const transport = new StdioClientTransport({
     command: process.execPath,
-    args: [fileURLPath(new URL('../index.mjs', import.meta.url))],
+    args: [fileURLPath(new URL('../../index.mjs', import.meta.url))],
     env: {
       ...process.env,
       CONTEXT_GOVERNOR_REGISTRY_PATH: fixture.registryPath,
