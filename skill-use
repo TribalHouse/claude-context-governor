@@ -1,0 +1,71 @@
+#!/usr/bin/env node
+/**
+ * Skill Governor — resolve a skill by name or alias, enable if inactive, print usage
+ * Usage: skill-use <name-or-alias> [more words ...]
+ *
+ * Accepts multi-word queries: `skill-use seo audit` matches alias "seo audit".
+ */
+
+import { resolveAlias, statusOf, enableSkill } from './lib/skills.mjs';
+
+const query = process.argv.slice(2).join(' ');
+
+if (!query) {
+  process.stdout.write('Usage: skill-use <name-or-alias>\n\n');
+  process.stdout.write('Examples:\n');
+  process.stdout.write('  skill-use gsap           → enables a skill aliased "gsap"\n');
+  process.stdout.write('  skill-use seo audit      → matches the "seo audit" alias\n\n');
+  process.stdout.write('Run skill-status to list all skills.\n');
+  process.exit(1);
+}
+
+const hit = resolveAlias(query);
+
+if (!hit) {
+  process.stdout.write(`✗ '${query}' not found in skill registry.\n\n`);
+  process.stdout.write('  Tips:\n');
+  process.stdout.write(`    skill-status --search ${query.split(' ')[0]}\n`);
+  process.stdout.write('    skill-status\n');
+  process.exit(1);
+}
+
+const { name, entry, score } = hit;
+
+process.stdout.write('\n');
+process.stdout.write(`Skill:       ${name}\n`);
+if (entry.description) process.stdout.write(`Description: ${entry.description}\n`);
+if (entry.notes) process.stdout.write(`Notes:       ${entry.notes}\n`);
+process.stdout.write(`Match score: ${score}\n`);
+process.stdout.write('\n');
+
+const state = statusOf(name);
+
+if (state.active) {
+  process.stdout.write('● Status: ACTIVE (loaded at session start)\n\n');
+  process.stdout.write('  Use in Claude Code chat:\n');
+  process.stdout.write(`    Say: "use ${name}" or "/${name}"\n`);
+  process.exit(0);
+}
+
+if (state.inactive) {
+  const result = enableSkill(name);
+  if (!result.moved) {
+    process.stdout.write(`✗ Could not enable '${name}'.\n`);
+    process.exit(1);
+  }
+  process.stdout.write(`● Enabled: moved ${name} from inactive → active.\n\n`);
+  process.stdout.write('  ⚠  RESTART REQUIRED\n');
+  process.stdout.write('     Run /clear in Claude Code (or start a new session) to load the skill.\n\n');
+  process.stdout.write('  After restart, use in chat:\n');
+  process.stdout.write(`    Say: "use ${name}" or invoke /${name}\n`);
+  if (entry.returnToInactiveAfterUse) {
+    process.stdout.write('\n  ℹ  Flagged returnToInactiveAfterUse — disable when done:\n');
+    process.stdout.write(`     skill-disable ${name}\n`);
+  }
+  process.exit(0);
+}
+
+process.stdout.write(`✗ Skill directory not found for '${name}'.\n`);
+process.stdout.write('  The registry entry exists but the directory is missing.\n');
+process.stdout.write('  Run skill-status for actual filesystem state.\n');
+process.exit(1);

@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Security vulnerability
+    url: https://github.com/TribalHouse/claude-context-governor/security/policy
+    about: Do not open a public issue. See SECURITY.md for reporting.
+  - name: Question or discussion
+    url: https://github.com/TribalHouse/claude-context-governor/discussions
+    about: Open a Discussion for "how do I" and design conversations.

@@ -1,0 +1,43 @@
+#!/usr/bin/env node
+/**
+ * Skill Governor — list active and inactive skills
+ * Usage: skill-status [--inactive-only | --active-only | --search <term>]
+ */
+
+import { listActive, listInactive, getProtected } from './lib/skills.mjs';
+
+const args = process.argv.slice(2);
+const filter = args.find(a => a === '--inactive-only' || a === '--active-only');
+const searchIdx = args.indexOf('--search');
+const searchTerm = searchIdx >= 0 ? args[searchIdx + 1] : null;
+
+const protectedList = new Set(getProtected());
+
+function printSection(title, marker, items) {
+  process.stdout.write(`\n${marker} ${title}:\n`);
+  let count = 0;
+  for (const skill of items) {
+    if (searchTerm && !skill.includes(searchTerm)) continue;
+    const flag = protectedList.has(skill) ? ' [protected]' : '';
+    process.stdout.write(`    ${skill}${flag}\n`);
+    count++;
+  }
+  process.stdout.write(`    ─── ${count} skill(s)\n`);
+}
+
+process.stdout.write('\nSkill Governor — Status\n');
+process.stdout.write('═'.repeat(56) + '\n');
+
+if (filter !== '--inactive-only') {
+  printSection('ACTIVE (loaded at session start)', '●', listActive());
+}
+if (filter !== '--active-only') {
+  printSection('INACTIVE (on-demand — not loaded at session start)', '○', listInactive());
+}
+
+process.stdout.write('\nCommands:\n');
+process.stdout.write('  skill-enable <name>            inactive → active\n');
+process.stdout.write('  skill-disable <name> [--force] active → inactive\n');
+process.stdout.write('  skill-use <name-or-alias>      resolve alias + enable + print usage\n');
+process.stdout.write('  skill-status --search <term>   filter by name\n');
+process.stdout.write('\nChanges take effect after /clear or session restart.\n');

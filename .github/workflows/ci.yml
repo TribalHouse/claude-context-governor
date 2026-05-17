@@ -1,0 +1,57 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  smoke:
+    name: Node ${{ matrix.node }} on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        node: ['18', '20', '22']
+        os: [ubuntu-latest, macos-latest]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Installer dry-run
+        run: CLAUDE_HOME=${{ runner.temp }}/cg-test node install.mjs --dry-run --no-settings
+
+      - name: Installer apply
+        run: CLAUDE_HOME=${{ runner.temp }}/cg-test node install.mjs --no-settings
+
+      - name: Governor --status (empty registry)
+        run: node index.mjs --status
+
+      - name: Routing hook — opus prompt
+        run: |
+          out=$(echo '{"user_prompt":"design the auth migration schema"}' | node hooks/route-prompt.mjs)
+          echo "$out"
+          echo "$out" | grep -q "opus" || (echo "expected opus advice"; exit 1)
+
+      - name: Routing hook — haiku prompt
+        run: |
+          out=$(echo '{"user_prompt":"why is the test failing"}' | node hooks/route-prompt.mjs)
+          echo "$out"
+          echo "$out" | grep -q "haiku" || (echo "expected haiku advice"; exit 1)
+
+      - name: Routing hook — sonnet prompt (silent)
+        run: |
+          out=$(echo '{"user_prompt":"add a tooltip to the button"}' | node hooks/route-prompt.mjs)
+          if [ -n "$out" ]; then echo "expected no output for sonnet route, got: $out"; exit 1; fi
+
+      - name: Skill governor smoke
+        run: |
+          mkdir -p ${{ runner.temp }}/cg-test/skills/example-skill
+          HOME=${{ runner.temp }}/cg-test ./skill-status --search example

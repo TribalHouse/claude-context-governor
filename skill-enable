@@ -1,0 +1,36 @@
+#!/usr/bin/env node
+/**
+ * Skill Governor — restore a skill from inactive to active
+ * Usage: skill-enable <skill-name>
+ */
+
+import { enableSkill, SKILLS_DIR, INACTIVE_DIR } from './lib/skills.mjs';
+
+const name = process.argv[2];
+
+if (!name) {
+  process.stdout.write('Usage: skill-enable <skill-name>\n\n');
+  process.stdout.write('Run skill-status to see available skills.\n');
+  process.exit(1);
+}
+
+const result = enableSkill(name);
+
+if (result.alreadyActive) {
+  process.stdout.write(`✓ '${name}' is already active (in ${SKILLS_DIR}).\n`);
+  process.exit(0);
+}
+
+if (result.moved) {
+  process.stdout.write(`✓ '${name}' enabled.\n\n`);
+  process.stdout.write('⚠  Run /clear in Claude Code (or start a new session) to load this skill.\n');
+  process.stdout.write(`   After restart, say: "use ${name}" or invoke /${name}\n`);
+  process.exit(0);
+}
+
+process.stdout.write(`✗ Skill '${name}' not found.\n\n`);
+process.stdout.write('  Searched:\n');
+process.stdout.write(`    ${SKILLS_DIR}/${name}\n`);
+process.stdout.write(`    ${INACTIVE_DIR}/${name}\n\n`);
+process.stdout.write('Run skill-status to see available skills.\n');
+process.exit(1);

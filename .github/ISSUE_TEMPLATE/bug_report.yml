@@ -1,0 +1,73 @@
+name: Bug report
+description: Something broke. Help us fix it.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for filing. Please complete every field — vague reports get closed without action.
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened
+      description: One paragraph. What did you expect, what did you see instead?
+      placeholder: I ran `node index.mjs --status` and expected to see my backends listed. Instead I got...
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to reproduce
+      description: Minimal sequence of commands. Include the `registry.json` if relevant (redact secrets).
+      placeholder: |
+        1. ...
+        2. ...
+        3. ...
+      render: bash
+    validations:
+      required: true
+
+  - type: input
+    id: node-version
+    attributes:
+      label: Node version
+      description: Output of `node --version`
+      placeholder: v20.11.0
+    validations:
+      required: true
+
+  - type: input
+    id: os
+    attributes:
+      label: Operating system
+      placeholder: macOS 15.2 (Apple Silicon)
+    validations:
+      required: true
+
+  - type: input
+    id: governor-version
+    attributes:
+      label: Context Governor version
+      description: From `package.json` or `git rev-parse --short HEAD`
+      placeholder: 1.0.0 or commit hash
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant log output
+      description: Last 50 lines of `governor.log`. Secrets are auto-redacted.
+      render: text
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Pre-flight checks
+      options:
+        - label: I ran `node index.mjs --status` and pasted the output above
+          required: true
+        - label: I searched existing issues and didn't find a duplicate
+          required: true

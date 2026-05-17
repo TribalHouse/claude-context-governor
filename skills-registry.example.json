@@ -1,0 +1,31 @@
+{
+  "_comment": "Skill Governor catalog. Filesystem (~/.claude/skills/ vs ~/.claude/skills-inactive/) is the source of truth for active state. This file is a catalog: aliases, descriptions, protected list. Used by skill-use for alias resolution and skill-disable for the protected list.",
+  "_settings": {
+    "activeDir": "~/.claude/skills",
+    "inactiveDir": "~/.claude/skills-inactive",
+    "pathConvention": "active → ~/.claude/skills/<name>  |  inactive → ~/.claude/skills-inactive/<name>"
+  },
+  "_protected": ["caveman", "stop-slop", "output-skill"],
+
+  "caveman": {
+    "aliases": ["caveman", "cave", "compress", "terse", "brief", "concise"],
+    "activePath": "~/.claude/skills/caveman",
+    "inactivePath": "~/.claude/skills-inactive/caveman",
+    "mode": "active",
+    "restoreOnExplicitRequest": false,
+    "returnToInactiveAfterUse": false,
+    "description": "Ultra-compressed response mode. Levels: lite (default), full, ultra.",
+    "notes": "PROTECTED. Never disable without --force."
+  },
+
+  "example-skill": {
+    "aliases": ["example", "demo"],
+    "activePath": "~/.claude/skills/example-skill",
+    "inactivePath": "~/.claude/skills-inactive/example-skill",
+    "mode": "inactive",
+    "restoreOnExplicitRequest": true,
+    "returnToInactiveAfterUse": true,
+    "description": "Example catalog entry showing the full schema.",
+    "notes": ""
+  }
+}

@@ -1,0 +1,26 @@
+# Dependencies
+node_modules/
+package-lock.json
+
+# Local config (users edit registry.json from registry.example.json)
+registry.json
+skills-registry.json
+
+# Runtime artifacts
+governor.log
+governor.log.*
+*.pid
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# settings.json backups produced by install.mjs
+settings.json.backup-*
+
+# mcpd state
+mcpd/pids/
+mcpd/logs/

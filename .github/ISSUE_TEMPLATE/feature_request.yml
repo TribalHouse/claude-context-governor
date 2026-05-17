@@ -1,0 +1,51 @@
+name: Feature request
+description: Suggest an idea, but please read the scope rules first.
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Before filing: this project is plumbing, not a framework. See the README's
+        "What this is NOT" section. We say no to most feature requests on principle.
+        Pitches that survive: they keep the scope honest, they keep startup context lean,
+        and they don't ship batteries (no bundled MCP backends, no skills, no workflow opinions).
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem does this solve?
+      description: Concrete user problem. Not "would be nice to have".
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed approach
+      description: How would this work? Config surface, CLI flag, code shape — whatever applies.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: What did you try first? Why didn't it work?
+    validations:
+      required: true
+
+  - type: textarea
+    id: scope
+    attributes:
+      label: Why this belongs in Context Governor
+      description: Argue against the three scope rules. If it fails any of them, it probably belongs in your own fork or a separate tool.
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Pre-flight checks
+      options:
+        - label: I read the README's "What this is NOT" section
+          required: true
+        - label: I searched existing issues for similar proposals
+          required: true

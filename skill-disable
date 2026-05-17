@@ -1,0 +1,47 @@
+#!/usr/bin/env node
+/**
+ * Skill Governor — archive an active skill to inactive
+ * Usage: skill-disable <skill-name> [--force]
+ *
+ * Protected list comes from skills-registry.json:_protected (single source of truth).
+ */
+
+import { disableSkill, getProtected } from './lib/skills.mjs';
+
+const name = process.argv[2];
+const force = process.argv[3] === '--force';
+
+if (!name) {
+  const protectedList = getProtected();
+  process.stdout.write('Usage: skill-disable <skill-name> [--force]\n\n');
+  if (protectedList.length > 0) {
+    process.stdout.write('Protected skills (require --force):\n');
+    for (const p of protectedList) process.stdout.write(`  ${p}\n`);
+    process.stdout.write('\n');
+  }
+  process.stdout.write('Run skill-status to see active skills.\n');
+  process.exit(1);
+}
+
+const result = disableSkill(name, force);
+
+if (result.protected) {
+  process.stdout.write(`⚠  '${name}' is a protected skill.\n`);
+  process.stdout.write(`   Use --force to override: skill-disable ${name} --force\n`);
+  process.exit(1);
+}
+
+if (result.alreadyInactive) {
+  process.stdout.write(`○ '${name}' is already inactive.\n`);
+  process.exit(0);
+}
+
+if (result.moved) {
+  process.stdout.write(`○ '${name}' disabled (moved to inactive).\n\n`);
+  process.stdout.write('⚠  Run /clear or start a new session to unload this skill.\n');
+  process.exit(0);
+}
+
+process.stdout.write(`✗ Skill '${name}' not found in active or inactive directories.\n\n`);
+process.stdout.write('Run skill-status to see all skills.\n');
+process.exit(1);

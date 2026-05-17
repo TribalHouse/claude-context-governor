@@ -1,0 +1,104 @@
+{
+  "name": "claude-context-governor",
+  "version": "1.0.0",
+  "description": "One MCP for Claude Code. Aggregates every backend you use, lazy-loads on demand, and parks dormant skills out of session context.",
+  "type": "module",
+  "main": "index.mjs",
+  "bin": {
+    "context-governor": "./index.mjs",
+    "skill-status": "./skill-status",
+    "skill-enable": "./skill-enable",
+    "skill-disable": "./skill-disable",
+    "skill-use": "./skill-use"
+  },
+  "scripts": {
+    "start": "node index.mjs",
+    "status": "node index.mjs --status",
+    "refresh-tools": "node index.mjs --refresh-tools",
+    "cleanup-idle": "node index.mjs --cleanup-idle",
+    "install:dry": "node install.mjs --dry-run",
+    "test:smoke": "node index.mjs --status && echo '{\"user_prompt\":\"design the auth schema\"}' | node hooks/route-prompt.mjs"
+  },
+  "keywords": [
+    "claude-code",
+    "claude",
+    "claude-code-plugin",
+    "anthropic",
+    "mcp",
+    "model-context-protocol",
+    "mcp-aggregator",
+    "mcp-server",
+    "mcp-router",
+    "mcp-gateway",
+    "mcp-proxy",
+    "ai-agent",
+    "ai-agents",
+    "agent-tools",
+    "subagent",
+    "subagents",
+    "agent-router",
+    "prompt-routing",
+    "prompt-router",
+    "model-routing",
+    "opus",
+    "sonnet",
+    "haiku",
+    "opusplan",
+    "skills",
+    "skill-manager",
+    "skill-router",
+    "context-management",
+    "context-window",
+    "context-optimization",
+    "token-optimization",
+    "token-budget",
+    "cost-optimization",
+    "developer-tools",
+    "devtools",
+    "ai-tools",
+    "ai-coding",
+    "ai-coding-assistant",
+    "llm",
+    "llm-tools",
+    "claude-cli",
+    "anthropic-claude",
+    "launchd",
+    "stdio"
+  ],
+  "author": {
+    "name": "Nour Beiruti",
+    "url": "https://github.com/TribalHouse"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TribalHouse/claude-context-governor.git"
+  },
+  "bugs": {
+    "url": "https://github.com/TribalHouse/claude-context-governor/issues"
+  },
+  "homepage": "https://github.com/TribalHouse/claude-context-governor#readme",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.0"
+  },
+  "files": [
+    "index.mjs",
+    "install.mjs",
+    "skill-status",
+    "skill-enable",
+    "skill-disable",
+    "skill-use",
+    "lib/",
+    "hooks/",
+    "mcpd/",
+    "registry.example.json",
+    "skills-registry.example.json",
+    "README.md",
+    "LICENSE",
+    "CONTRIBUTING.md",
+    "CODE_OF_CONDUCT.md"
+  ]
+}
