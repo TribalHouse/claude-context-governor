@@ -14,7 +14,7 @@
 </p>
 
 <p align="center">
-  <img src="./assets/context_governor_typewriter_same_format.svg" alt="Context Governor typewriter intro" width="780">
+  <img src="./assets/context_governor.svg" alt="Context Governor typewriter intro" width="780">
 </p>
 
 <p align="center">
